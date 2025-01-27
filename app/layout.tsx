@@ -1,6 +1,8 @@
-import { Provider as ColorModeProvider } from "@/app/shared/components/provider";
+import { Provider as ColorModeProvider } from "@/app/shared/snippets/provider";
+import Header from "@/app/shared/header";
 import type { Metadata } from "next";
 import { Montserrat_Alternates, Questrial, Arvo } from "next/font/google";
+import Footer from "@/app/shared/footer";
 
 const montserrat = Montserrat_Alternates({
   variable: "--font-montserrat-alternates",
@@ -32,8 +34,19 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body
         className={`${montserrat.variable} ${arvo.variable} ${questrial.variable}`}
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          height: "100vh",
+          maxWidth: "100vw",
+          justifyContent: "space-between",
+        }}
       >
-        <ColorModeProvider>{children}</ColorModeProvider>
+        <ColorModeProvider>
+          <Header />
+          {children}
+          <Footer />
+        </ColorModeProvider>
       </body>
     </html>
   );

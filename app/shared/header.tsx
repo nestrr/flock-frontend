@@ -15,6 +15,16 @@ import Animation from "./animation";
 import { DialogContent, DialogRoot, DialogTrigger } from "./snippets/dialog";
 import { useState } from "react";
 import { useSession } from "next-auth/react";
+import { type User } from "next-auth";
+import { Avatar } from "./snippets/avatar";
+import { ringCss } from "@/theme";
+import {
+  PopoverBody,
+  PopoverContent,
+  PopoverRoot,
+  PopoverTrigger,
+} from "./snippets/popover";
+import { Tag } from "./snippets/tag";
 function LoginButton() {
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   return (
@@ -63,21 +73,142 @@ function LoginButton() {
     </DialogRoot>
   );
 }
-function Welcome({ name }: { name: string }) {
-  const firstName = name.split(" ")[0];
+function Welcome({ user }: { user: User }) {
+  const firstName = user.name!.split(" ")[0];
+
   return (
-    <Text fontSize="lg">
-      Welcome, <b>{firstName}</b>!
-    </Text>
+    <Box>
+      <PopoverRoot>
+        <PopoverTrigger
+          _hover={{
+            bg: "secondary.muted",
+            shadow: "0 0 0px 1px secondary.300/80",
+          }}
+          _active={{
+            bg: "secondary.muted",
+            shadow: "0 0 0px 1px secondary.300/80",
+          }}
+          _expanded={{
+            bg: "secondary.muted",
+            shadow: "0 0 0px 1px secondary.300/80",
+          }}
+          p={2}
+          height="100%"
+          rounded="lg"
+        >
+          <HStack gap={4}>
+            <Avatar
+              name={user.name!}
+              src={user.image!}
+              colorPalette={"accent"}
+              css={ringCss}
+            />
+            <Text
+              fontWeight="bold"
+              fontSize="lg"
+              fontFamily={"heading"}
+              display={{ base: "none", md: "block" }}
+            >
+              {firstName}
+            </Text>
+          </HStack>{" "}
+        </PopoverTrigger>
+        <PopoverContent width="100%" bg="secondary" aria-label="User Info">
+          <PopoverBody>
+            <VStack
+              alignItems={"center"}
+              textAlign={"center"}
+              width="100%"
+              justifyContent={"center"}
+            >
+              <Tag
+                colorPalette={"accent"}
+                size={"sm"}
+                fontWeight={"semibold"}
+                fontFamily={"heading"}
+                letterSpacing={"wide"}
+                variant={"surface"}
+              >
+                {user.roles[0]}
+              </Tag>
+              <Heading size={"lg"}>{user.name}</Heading>
+
+              <HStack
+                alignItems={"center"}
+                justifyContent={"space-between"}
+                w="90%"
+              >
+                <Text>Campus: </Text>
+                <Tag
+                  colorPalette={"gray.700"}
+                  size={"sm"}
+                  variant={"surface"}
+                  fontWeight={"bold"}
+                  letterSpacing={"wide"}
+                  textTransform={"lowercase"}
+                >
+                  {user.campusChoices?.length === 0
+                    ? "Unlisted"
+                    : user.campusChoices[0]?.name}
+                </Tag>
+              </HStack>
+
+              <HStack
+                alignItems={"center"}
+                justifyContent={"space-between"}
+                w="90%"
+              >
+                <Text>Major: </Text>
+                <Tag
+                  colorPalette={"gray"}
+                  size={"sm"}
+                  variant={"surface"}
+                  fontWeight={"bold"}
+                  letterSpacing={"wide"}
+                  textTransform={"lowercase"}
+                >
+                  {user.major ? user.major : "undeclared"}
+                </Tag>
+              </HStack>
+
+              <HStack
+                alignItems={"center"}
+                justifyContent={"space-between"}
+                w="90%"
+              >
+                <Text>Year: </Text>
+                <Tag
+                  colorPalette={"primary.700"}
+                  size={"sm"}
+                  variant={"surface"}
+                  fontWeight={"bold"}
+                  letterSpacing={"wide"}
+                  textTransform={"lowercase"}
+                >
+                  {user.major ? user.major : "unknown"}
+                </Tag>
+              </HStack>
+            </VStack>
+          </PopoverBody>
+        </PopoverContent>
+      </PopoverRoot>
+    </Box>
   );
 }
 function Auth() {
   const { data: session, status } = useSession();
+  console.log(session);
   if (status === "loading") {
-    return <Skeleton width="10em" height="2em" />;
+    return (
+      <Skeleton
+        colorPalette={"secondary"}
+        width={{ base: "3em", md: "10em" }}
+        height="2em"
+      />
+    );
   }
   if (status === "authenticated") {
-    return <Welcome name={session?.user?.name ?? ""} />;
+    return <Welcome user={session!.user} />;
   }
   return <LoginButton />;
 }
@@ -94,13 +225,12 @@ export default function Header() {
       flexDir={"row"}
       justifyContent={"space-between"}
       alignItems={"center"}
-      py={5}
       px={8}
     >
       <Heading as="h1" size="4xl" letterSpacing={"wide"}>
         flock
       </Heading>
-      <HStack display="flex" alignItems="center" gap={5}>
+      <HStack display="flex" alignItems="center" py={3} gap={5} height="100%">
         <Auth />
         <ColorModeButton rounded="full" />
       </HStack>

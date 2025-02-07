@@ -3,6 +3,8 @@ import Header from "@/app/shared/header";
 import type { Metadata } from "next";
 import { Montserrat_Alternates, Questrial, Arvo } from "next/font/google";
 import Footer from "@/app/shared/footer";
+import { Toaster } from "./shared/snippets/toaster";
+import { SessionProvider } from "next-auth/react";
 
 const montserrat = Montserrat_Alternates({
   variable: "--font-montserrat-alternates",
@@ -42,11 +44,14 @@ export default function RootLayout({
           justifyContent: "space-between",
         }}
       >
-        <ColorModeProvider>
-          <Header />
-          {children}
-          <Footer />
-        </ColorModeProvider>
+        <SessionProvider>
+          <ColorModeProvider>
+            <Toaster />
+            <Header />
+            {children}
+            <Footer />
+          </ColorModeProvider>
+        </SessionProvider>
       </body>
     </html>
   );

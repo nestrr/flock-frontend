@@ -8,6 +8,7 @@ import {
   VStack,
   Text,
   Skeleton,
+  Badge,
 } from "@chakra-ui/react";
 import { ColorModeButton } from "./snippets/color-mode";
 import { signIn } from "@/app/actions/signin";
@@ -25,6 +26,7 @@ import {
   PopoverTrigger,
 } from "./snippets/popover";
 import { Tag } from "./snippets/tag";
+import Link from "next/link";
 function LoginButton() {
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   return (
@@ -81,15 +83,15 @@ function Welcome({ user }: { user: User }) {
       <PopoverRoot>
         <PopoverTrigger
           _hover={{
-            bg: "secondary.muted",
+            bg: "secondary.emphasized",
             shadow: "0 0 0px 1px secondary.300/80",
           }}
           _active={{
-            bg: "secondary.muted",
+            bg: "secondary.emphasized",
             shadow: "0 0 0px 1px secondary.300/80",
           }}
           _expanded={{
-            bg: "secondary.muted",
+            bg: "secondary.emphasized",
             shadow: "0 0 0px 1px secondary.300/80",
           }}
           p={2}
@@ -100,7 +102,7 @@ function Welcome({ user }: { user: User }) {
             <Avatar
               name={user.name!}
               src={user.image!}
-              colorPalette={"accent"}
+              bg="primary.contrast"
               css={ringCss}
             />
             <Text
@@ -137,6 +139,7 @@ function Welcome({ user }: { user: User }) {
                 alignItems={"center"}
                 justifyContent={"space-between"}
                 w="90%"
+                mt={3}
               >
                 <Text>Campus: </Text>
                 <Tag
@@ -159,7 +162,7 @@ function Welcome({ user }: { user: User }) {
                 w="90%"
               >
                 <Text>Major: </Text>
-                <Tag
+                <Badge
                   colorPalette={"gray"}
                   size={"sm"}
                   variant={"surface"}
@@ -168,13 +171,14 @@ function Welcome({ user }: { user: User }) {
                   textTransform={"lowercase"}
                 >
                   {user.major ? user.major : "undeclared"}
-                </Tag>
+                </Badge>
               </HStack>
 
               <HStack
                 alignItems={"center"}
                 justifyContent={"space-between"}
                 w="90%"
+                mb={3}
               >
                 <Text>Year: </Text>
                 <Tag
@@ -187,6 +191,20 @@ function Welcome({ user }: { user: User }) {
                 >
                   {user.major ? user.major : "unknown"}
                 </Tag>
+              </HStack>
+              <HStack gap={10}>
+                <Button variant={"subtle"} colorPalette={"accent"} size="xs">
+                  Edit Profile{" "}
+                </Button>
+                <Button
+                  variant={"solid"}
+                  bg={"red.700/80"}
+                  _hover={{ bg: "red.700" }}
+                  colorPalette={"red"}
+                  size="xs"
+                >
+                  Log Out{" "}
+                </Button>
               </HStack>
             </VStack>
           </PopoverBody>
@@ -227,9 +245,11 @@ export default function Header() {
       alignItems={"center"}
       px={8}
     >
-      <Heading as="h1" size="4xl" letterSpacing={"wide"}>
-        flock
-      </Heading>
+      <Link href="/">
+        <Heading as="h1" size="4xl" letterSpacing={"wide"}>
+          flock
+        </Heading>
+      </Link>
       <HStack display="flex" alignItems="center" py={3} gap={5} height="100%">
         <Auth />
         <ColorModeButton rounded="full" />

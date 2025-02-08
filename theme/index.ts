@@ -4,6 +4,7 @@ import {
   defineConfig,
   defineRecipe,
   defineSemanticTokens,
+  defineStyle,
   defineTokens,
   mergeConfigs,
 } from "@chakra-ui/react";
@@ -191,7 +192,7 @@ const colorSemanticTokens = defineSemanticTokens({
       },
       fg: {
         value: {
-          _light: "{colors.textDark.main}",
+          _light: "{colors.textLight.main}",
           _dark: "{colors.textLight.main}",
         },
       },
@@ -203,20 +204,20 @@ const colorSemanticTokens = defineSemanticTokens({
       },
       subtle: {
         value: {
-          _light: "{colors.accentLight.800}",
-          _dark: "{colors.accentDark.300}",
+          _light: "{colors.accentLight.200}",
+          _dark: "{colors.accentDark.200}",
         },
       },
       muted: {
         value: {
           _light: "{colors.accentLight.300}",
-          _dark: "{colors.accentDark.700}",
+          _dark: "{colors.accentDark.800}",
         },
       },
       emphasized: {
         value: {
           _light: "{colors.accentLight.500}",
-          _dark: "{colors.accentDark.500}",
+          _dark: "{colors.accentDark.300}",
         },
       },
       solid: {
@@ -229,14 +230,14 @@ const colorSemanticTokens = defineSemanticTokens({
     primary: {
       DEFAULT: {
         value: {
-          _light: "{colors.primaryLight.main}",
-          _dark: "{colors.primaryDark.200}",
+          _light: "{colors.primaryLight.200}",
+          _dark: "{colors.primaryDark.800}",
         },
       },
       fg: {
         value: {
-          _light: "{colors.textDark.main}",
-          _dark: "{colors.textLight.main}",
+          _light: "{colors.textLight.main}",
+          _dark: "{colors.textDark.main}",
         },
       },
       contrast: {
@@ -247,20 +248,20 @@ const colorSemanticTokens = defineSemanticTokens({
       },
       subtle: {
         value: {
-          _light: "{colors.primaryLight.600}",
-          _dark: "{colors.primaryDark.300}",
+          _light: "{colors.primaryLight.300}",
+          _dark: "{colors.primaryDark.600}",
         },
       },
       muted: {
         value: {
-          _light: "{colors.primaryLight.300}",
-          _dark: "{colors.primaryLight.700}",
+          _light: "{colors.primaryLight.100}",
+          _dark: "{colors.primaryDark.400}",
         },
       },
       emphasized: {
         value: {
-          _light: "{colors.primaryLight.500}",
-          _dark: "{colors.primaryDark.400}",
+          _light: "{colors.primaryLight.400}",
+          _dark: "{colors.primaryDark.500}",
         },
       },
       panel: {
@@ -280,13 +281,13 @@ const colorSemanticTokens = defineSemanticTokens({
       DEFAULT: {
         value: {
           _light: "{colors.secondaryLight.main}",
-          _dark: "{colors.secondaryDark.main}",
+          _dark: "{colors.secondaryDark.900}",
         },
       },
       fg: {
         value: {
           _light: "{colors.textLight.main}",
-          _dark: "{colors.textLight.main}",
+          _dark: "{colors.textDark.main}",
         },
       },
       contrast: {
@@ -298,19 +299,19 @@ const colorSemanticTokens = defineSemanticTokens({
       subtle: {
         value: {
           _light: "{colors.secondaryLight.200}",
-          _dark: "{colors.secondaryDark.400}",
+          _dark: "{colors.secondaryDark.800}",
         },
       },
       muted: {
         value: {
-          _light: "{colors.secondaryLight.300}",
-          _dark: "{colors.secondaryLight.700}",
+          _light: "{colors.secondaryLight.100}",
+          _dark: "{colors.secondaryDark.900}",
         },
       },
       emphasized: {
         value: {
-          _light: "{colors.secondaryLight.500}",
-          _dark: "{colors.secondaryDark.500}",
+          _light: "{colors.secondaryLight.300}",
+          _dark: "{colors.secondaryDark.900}",
         },
       },
       panel: {
@@ -364,6 +365,11 @@ const theme = defineConfig({
     semanticTokens: { ...colorSemanticTokens },
   },
 });
-
 const config = mergeConfigs(defaultConfig, theme);
 export const system = createSystem(config);
+export const ringCss = defineStyle({
+  outlineWidth: "2px",
+  outlineColor: "colorPalette.500",
+  outlineOffset: "2px",
+  outlineStyle: "solid",
+});

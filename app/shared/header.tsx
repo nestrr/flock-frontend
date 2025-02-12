@@ -9,14 +9,11 @@ import {
   Text,
   Skeleton,
   Badge,
+  LinkOverlay,
+  LinkBox,
 } from "@chakra-ui/react";
 import { ColorModeButton } from "./snippets/color-mode";
-import { signIn } from "@/app/actions/signin";
-import Animation from "./animation";
-import { DialogContent, DialogRoot, DialogTrigger } from "./snippets/dialog";
-import { useState } from "react";
-import { useSession } from "next-auth/react";
-import { type User } from "next-auth";
+import { useEffect, useState } from "react";
 import { Avatar } from "./snippets/avatar";
 import { ringCss } from "@/theme";
 import {
@@ -27,52 +24,44 @@ import {
 } from "./snippets/popover";
 import { Tag } from "./snippets/tag";
 import Link from "next/link";
+import AnimatedDialog from "./animated-dialog";
+import { signIn } from "../actions/signin";
+import { type User } from "next-auth";
+import { useSession } from "next-auth/react";
 function LoginButton() {
   const [isLoggingIn, setIsLoggingIn] = useState(false);
-  return (
-    <DialogRoot
-      placement="center"
-      motionPreset="slide-in-bottom"
-      open={isLoggingIn}
+  const trigger = (
+    <Button
+      colorPalette="accent"
+      variant={"surface"}
+      shadow={"0 0 0 0"}
+      aria-label="Log In"
+      disabled={isLoggingIn}
+      onClick={() => {
+        setIsLoggingIn(true);
+        signIn();
+      }}
     >
-      <DialogTrigger asChild>
-        <Button
-          colorPalette="accent"
-          variant={"surface"}
-          shadow={"0 0 0 0"}
-          aria-label="Log In"
-          disabled={isLoggingIn}
-          onClick={() => {
-            setIsLoggingIn(true);
-            signIn();
-          }}
-        >
-          Log In
-        </Button>
-      </DialogTrigger>
-      <DialogContent>
-        <VStack
-          height="100%"
-          alignItems="center"
-          justifyContent={"center"}
-          p={10}
-        >
-          <Box width={500} aspectRatio={"initial"} m={0} p={0}>
-            {" "}
-            <Animation name="birdloader" />
-          </Box>
-
-          <Text
-            fontSize="lg"
-            letterSpacing={"wide"}
-            textAlign={"center"}
-            lineHeight={1.2}
-          >
-            Hang tight! We&apos;re sending you to the OIT login page.
-          </Text>
-        </VStack>
-      </DialogContent>
-    </DialogRoot>
+      Log In
+    </Button>
+  );
+  const content = (
+    <Text
+      fontSize="lg"
+      letterSpacing={"wide"}
+      textAlign={"center"}
+      lineHeight={1.2}
+    >
+      Hang tight! We&apos;re sending you to the OIT login page.
+    </Text>
+  );
+  return (
+    <AnimatedDialog
+      animationName="birdloader"
+      open={isLoggingIn}
+      content={content}
+      trigger={trigger}
+    />
   );
 }
 function Welcome({ user }: { user: User }) {
@@ -196,15 +185,19 @@ function Welcome({ user }: { user: User }) {
                 <Button variant={"subtle"} colorPalette={"accent"} size="xs">
                   Edit Profile{" "}
                 </Button>
-                <Button
-                  variant={"solid"}
-                  bg={"red.700/80"}
-                  _hover={{ bg: "red.700" }}
-                  colorPalette={"red"}
-                  size="xs"
-                >
-                  Log Out{" "}
-                </Button>
+                <LinkBox>
+                  <Button
+                    variant={"solid"}
+                    bg={"red.700/80"}
+                    _hover={{ bg: "red.700" }}
+                    colorPalette={"red"}
+                    size="xs"
+                  >
+                    <LinkOverlay asChild>
+                      <Link href="/signout">Log Out </Link>
+                    </LinkOverlay>
+                  </Button>
+                </LinkBox>
               </HStack>
             </VStack>
           </PopoverBody>
@@ -215,7 +208,9 @@ function Welcome({ user }: { user: User }) {
 }
 function Auth() {
   const { data: session, status } = useSession();
-  console.log(session);
+  useEffect(() => {
+    console.log("SESSION", session);
+  }, [session]);
   if (status === "loading") {
     return (
       <Skeleton

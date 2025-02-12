@@ -27,6 +27,7 @@ function FooterLink({
         letterSpacing={"wide"}
         color="primary.fg"
         textAlign={{ mdDown: "center" }}
+        fontSize={"sm"}
       >
         <NextLink href={href}>
           <Icon fontSize={"1.5em"} display={{ mdDown: "none" }}>
@@ -50,10 +51,10 @@ export default function Footer() {
       px={8}
       justifyContent={"space-between"}
     >
-      <Heading size="lg" maxWidth={"60%"}>
+      <Heading size="md" maxWidth={"60%"}>
         Made with ❤️ by Oregon Tech, for Oregon Tech.
       </Heading>
-      <Stack gap={3} alignItems="end" px={2}>
+      <Stack gap={3} alignItems="end" flexDir={{ base: "column", md: "row" }}>
         <FooterLink
           icon={<LuGithub />}
           href="https://github.com/nestrr"

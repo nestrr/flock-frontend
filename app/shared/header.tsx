@@ -13,7 +13,7 @@ import {
   LinkBox,
 } from "@chakra-ui/react";
 import { ColorModeButton } from "./snippets/color-mode";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Avatar } from "./snippets/avatar";
 import { ringCss } from "@/theme";
 import {
@@ -26,8 +26,9 @@ import { Tag } from "./snippets/tag";
 import Link from "next/link";
 import AnimatedDialog from "./animated-dialog";
 import { signIn } from "../actions/signin";
-import { type User } from "next-auth";
 import { useSession } from "next-auth/react";
+import { type Profile, useSelfProfile } from "../swr/profile";
+import { toaster } from "./snippets/toaster";
 function LoginButton() {
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const trigger = (
@@ -64,9 +65,9 @@ function LoginButton() {
     />
   );
 }
-function Welcome({ user }: { user: User }) {
+function Welcome({ user }: { user: Profile }) {
   const firstName = user.name!.split(" ")[0];
-
+  const { degree, name, image, roles, standing, campusChoices } = user;
   return (
     <Box>
       <PopoverRoot>
@@ -89,8 +90,8 @@ function Welcome({ user }: { user: User }) {
         >
           <HStack gap={4}>
             <Avatar
-              name={user.name!}
-              src={user.image!}
+              name={name!}
+              src={image!}
               bg="primary.contrast"
               css={ringCss}
             />
@@ -120,9 +121,9 @@ function Welcome({ user }: { user: User }) {
                 letterSpacing={"wide"}
                 variant={"surface"}
               >
-                {user.roles[0]}
+                {roles[0]}
               </Tag>
-              <Heading size={"lg"}>{user.name}</Heading>
+              <Heading size={"lg"}>{name}</Heading>
 
               <HStack
                 alignItems={"center"}
@@ -139,9 +140,9 @@ function Welcome({ user }: { user: User }) {
                   letterSpacing={"wide"}
                   textTransform={"lowercase"}
                 >
-                  {user.campusChoices?.length === 0
+                  {campusChoices?.length === 0
                     ? "Unlisted"
-                    : user.campusChoices[0]?.name}
+                    : campusChoices[0]?.name}
                 </Tag>
               </HStack>
 
@@ -150,7 +151,7 @@ function Welcome({ user }: { user: User }) {
                 justifyContent={"space-between"}
                 w="90%"
               >
-                <Text>Major: </Text>
+                <Text>Degree: </Text>
                 <Badge
                   colorPalette={"gray"}
                   size={"sm"}
@@ -159,7 +160,9 @@ function Welcome({ user }: { user: User }) {
                   letterSpacing={"wide"}
                   textTransform={"lowercase"}
                 >
-                  {user.major ? user.major : "undeclared"}
+                  {degree
+                    ? `${degree.degreeTypeCode} | ${degree.programName}`
+                    : "undeclared"}
                 </Badge>
               </HStack>
 
@@ -178,7 +181,7 @@ function Welcome({ user }: { user: User }) {
                   letterSpacing={"wide"}
                   textTransform={"lowercase"}
                 >
-                  {user.major ? user.major : "unknown"}
+                  {standing ? standing.name : "unknown"}
                 </Tag>
               </HStack>
               <HStack gap={10}>
@@ -208,20 +211,28 @@ function Welcome({ user }: { user: User }) {
 }
 function Auth() {
   const { data: session, status } = useSession();
-  useEffect(() => {
-    console.log("SESSION", session);
-  }, [session]);
-  if (status === "loading") {
+  const {
+    data: profile,
+    isLoading: isCompleteProfileLoading,
+    error,
+  } = useSelfProfile(session?.accessToken);
+  if (status === "loading" || isCompleteProfileLoading) {
     return (
       <Skeleton
-        colorPalette={"secondary"}
+        bg={"accent.muted/50"}
         width={{ base: "3em", md: "10em" }}
         height="2em"
       />
     );
   }
-  if (status === "authenticated") {
-    return <Welcome user={session!.user} />;
+  if (error)
+    toaster.create({
+      title: "Error",
+      description: error.message,
+      type: "error",
+    });
+  if (status === "authenticated" && !!profile) {
+    return <Welcome user={{ ...session!.user, ...profile } as Profile} />;
   }
   return <LoginButton />;
 }

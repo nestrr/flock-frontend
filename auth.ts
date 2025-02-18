@@ -24,26 +24,28 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       return !!auth;
     },
     // based on guide: https://authjs.dev/guides/integrating-third-party-backends#storing-the-token-in-the-session
-    async jwt({ token, account }) {
-      if (!!token.accessToken) return token;
-      return { ...token, accessToken: account?.access_token };
+    async jwt({ token, account, trigger, user }) {
+      if ((trigger === "signIn" || trigger === "signUp") && !!token) {
+        fetch(`${process.env.API_URL!}/profile/me`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${account?.access_token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name: user.name,
+            email: user.email,
+            image: user.image,
+          }),
+        });
+        return { ...token, accessToken: account?.access_token };
+      }
+      return token;
     },
     async session({ session, token }) {
       const accessToken = session?.accessToken ?? token.accessToken;
-      const res = await fetch(`${process.env.API_URL!}/profile/me`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: session.user.name,
-          email: session.user.email,
-          image: session.user.image,
-        }),
-      });
-      const details = await res.json();
-      return { ...session, accessToken, user: { ...session.user, ...details } };
+
+      return { ...session, accessToken, user: session.user };
     },
   },
 });

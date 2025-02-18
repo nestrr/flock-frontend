@@ -1,7 +1,7 @@
 import { type User } from "next-auth";
 import { type DAYS } from "@/app/shared/constants";
 
-import useSWR from "swr";
+import useSWR, { type SWRConfiguration } from "swr";
 
 export type Campus = {
   id: string;
@@ -9,6 +9,7 @@ export type Campus = {
   description: string;
 };
 export interface Timeslot {
+  id: string;
   from: string;
   to: string;
   reliability: number;
@@ -47,6 +48,15 @@ export interface Profile extends User {
   campusChoices: Campus[];
   preferredTimes: Record<Day, Timeslot[]>;
 }
+const defaultOptions: SWRConfiguration = {
+  onErrorRetry: (error, key, _config, _revalidate, { retryCount }) => {
+    // Never retry on 404.
+    if (error.status === 404) return;
+
+    // Only retry up to 2 times.
+    if (retryCount >= 2) return;
+  },
+};
 
 const fetcher = async (url: string, token: string) => {
   const response = await fetch(url, {
@@ -76,7 +86,8 @@ export function useSelfProfile(accessToken: string | undefined) {
   const { data, error, isLoading } = useSWR<User>(
     fetchCheck(!!accessToken, accessToken, "/profile/me"),
     ([url, accessToken]: [url: string, accessToken: string]) =>
-      fetcher(url, accessToken)
+      fetcher(url, accessToken),
+    defaultOptions
   );
 
   return {
@@ -90,7 +101,8 @@ export function useStandings(accessToken: string | undefined) {
   const { data, error, isLoading } = useSWR<Array<Standing>>(
     fetchCheck(!!accessToken, accessToken, "/standing"),
     ([url, accessToken]: [url: string, accessToken: string]) =>
-      fetcher(url, accessToken)
+      fetcher(url, accessToken),
+    defaultOptions
   );
 
   return {
@@ -104,7 +116,8 @@ export function useDegreeTypes(accessToken: string | undefined) {
   const { data, error, isLoading } = useSWR<Array<DegreeType>>(
     fetchCheck(!!accessToken, accessToken, "/degree-type"),
     ([url, accessToken]: [url: string, accessToken: string]) =>
-      fetcher(url, accessToken)
+      fetcher(url, accessToken),
+    defaultOptions
   );
 
   return {
@@ -122,9 +135,66 @@ export function usePrograms(accessToken?: string, degreeType?: string) {
       `/program?degreeType=${encodeURIComponent(degreeType!)}`
     ),
     ([url, accessToken]: [url: string, accessToken: string]) =>
-      fetcher(url, accessToken)
+      fetcher(url, accessToken),
+    defaultOptions
   );
 
+  return {
+    data,
+    error,
+    isLoading,
+  };
+}
+
+export function useProgram(accessToken?: string, programCode?: string) {
+  const { data, error, isLoading } = useSWR<Program>(
+    fetchCheck(
+      !!accessToken && !!programCode,
+      accessToken,
+      `/program/${encodeURIComponent(programCode!)}`
+    ),
+    ([url, accessToken]: [url: string, accessToken: string]) =>
+      fetcher(url, accessToken),
+    defaultOptions
+  );
+
+  return {
+    data,
+    error,
+    isLoading,
+  };
+}
+
+export function useCampus(accessToken?: string, campusId?: string) {
+  const { data, error, isLoading } = useSWR<Campus>(
+    fetchCheck(
+      !!accessToken && !!campusId,
+      accessToken,
+      `/campus/${encodeURIComponent(campusId!)}`
+    ),
+    ([url, accessToken]: [url: string, accessToken: string]) =>
+      fetcher(url, accessToken),
+    defaultOptions
+  );
+
+  return {
+    data,
+    error,
+    isLoading,
+  };
+}
+
+export function useStanding(accessToken?: string, standingId?: string) {
+  const { data, error, isLoading } = useSWR<Standing>(
+    fetchCheck(
+      !!accessToken && !!standingId,
+      accessToken,
+      `/standing/${encodeURIComponent(standingId!)}`
+    ),
+    ([url, accessToken]: [url: string, accessToken: string]) =>
+      fetcher(url, accessToken),
+    defaultOptions
+  );
   return {
     data,
     error,
@@ -136,7 +206,8 @@ export function useCampuses(accessToken?: string) {
   const { data, error, isLoading } = useSWR<Array<Campus>>(
     fetchCheck(!!accessToken, accessToken, `/campus`),
     ([url, accessToken]: [url: string, accessToken: string]) =>
-      fetcher(url, accessToken)
+      fetcher(url, accessToken),
+    defaultOptions
   );
 
   return {

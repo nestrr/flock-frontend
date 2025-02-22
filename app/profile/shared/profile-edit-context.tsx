@@ -301,12 +301,11 @@ function profileEditReducer(allChanges: ProfileEditSummary, action: Action) {
           staleCampuses.add(campus);
         }
         if (previouslyAdded) {
+          previouslyAdded.pop();
           return {
             ...allChanges,
             edits: {
-              campusIds: previouslyAdded.filter(
-                (campus) => !staleCampuses.has(campus)
-              ),
+              campusIds: previouslyAdded,
             },
             deleted: {
               ...deleted,

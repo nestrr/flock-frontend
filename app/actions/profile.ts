@@ -23,7 +23,6 @@ export type ProfileUpdateRequest = Partial<
 export const updateProfile = async (
   updateRequest: Record<string, unknown>
 ): Promise<ServerActionResponse> => {
-  console.log("reached here");
   const session = await auth();
   if (!session) throw Error("Not authenticated");
   try {

@@ -2,7 +2,24 @@
 
 import { auth } from "@/auth";
 import { type ServerActionResponse } from "./types";
-
+import { type Timeslot } from "../swr/profile";
+import { type RequireAtLeastOne } from "type-fest";
+import {
+  type DeletedTimeslot,
+  type Edit,
+} from "../profile/shared/profile-edit-context";
+export type ProfileUpdateRequest = Partial<
+  Omit<Edit, "campusIds" | "timeslots"> & {
+    campusChoices?: RequireAtLeastOne<{
+      added: Array<string>;
+      deleted: Array<string>;
+    }>;
+    timeslots?: RequireAtLeastOne<{
+      added: Array<Array<Timeslot>>;
+      deleted: Array<Array<DeletedTimeslot>>;
+    }>;
+  }
+>;
 export const updateProfile = async (
   updateRequest: Record<string, unknown>
 ): Promise<ServerActionResponse> => {

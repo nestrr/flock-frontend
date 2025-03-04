@@ -13,7 +13,8 @@ import {
 } from "@chakra-ui/react";
 import { DialogBody, DialogHeader } from "../shared/snippets/dialog";
 import {
-  type Edits,
+  type Deleted,
+  type Edit,
   type Errors,
   useProfileEdit,
 } from "./shared/profile-edit-context";
@@ -21,9 +22,10 @@ import { Avatar } from "../shared/snippets/avatar";
 import { useCampus, useProgram, useStanding } from "../swr/profile";
 import { useSession } from "next-auth/react";
 import { type StringKeyOf } from "type-fest";
-import { updateProfile } from "../actions/profile";
+import { type ProfileUpdateRequest, updateProfile } from "../actions/profile";
 import { toaster } from "../shared/snippets/toaster";
 import { LuHeartCrack } from "react-icons/lu";
+import { DAYS } from "../shared/constants";
 
 export function Program({
   mergedDegreeType,
@@ -59,7 +61,7 @@ export function Badges({
   primaryCampusId,
   mergedStanding,
 }: {
-  primaryCampusId: string;
+  primaryCampusId?: string;
   mergedStanding: string;
 }) {
   const { data: session, status: sessionStatus } = useSession();
@@ -128,35 +130,49 @@ export function Badges({
 }
 export function SaveButton() {
   const { edits, deleted, errors } = useProfileEdit();
-  const { preferredTimes } = edits;
   function createUpdateRequest() {
-    const updateRequest = (Object.keys(edits) as StringKeyOf<Edits>[]).reduce(
-      (acc, key) => {
-        if (typeof edits[key] === "string" && edits[key] !== null)
-          return { ...acc, [key]: edits[key] };
-        if (key === "preferredTimes") {
-          return {
-            ...acc,
-            preferredTimes: {
-              added: preferredTimes,
-              deleted: deleted.preferredTimes ?? [],
-            },
-          };
-        }
-        if (key === "campusIds") {
-          return {
-            ...acc,
-            campusIds: {
-              added: edits.campusIds ?? [],
-              deleted: Array.from(deleted.campusIds ?? []),
-            },
-          };
-        }
-        return acc;
-      },
-      {} as Record<string, unknown>
-    );
+    let updateRequest: ProfileUpdateRequest = {};
 
+    for (const key of Object.keys(edits) as StringKeyOf<Edit>[]) {
+      if (typeof edits[key] === "string")
+        updateRequest = { ...updateRequest, [key]: edits[key] };
+      if (key === "timeslots") {
+        updateRequest = {
+          ...updateRequest,
+          timeslots: {
+            added: DAYS.map((day) => edits.timeslots![day] ?? []),
+          },
+        };
+      }
+      if (key === "campusIds") {
+        updateRequest = {
+          ...updateRequest,
+          campusChoices: {
+            added: edits.campusIds!,
+          },
+        };
+      }
+    }
+
+    for (const key of Object.keys(deleted) as StringKeyOf<Deleted>[]) {
+      if (key === "timeslots") {
+        updateRequest = {
+          ...updateRequest,
+          timeslots: {
+            ...(updateRequest.timeslots ?? {}),
+            deleted: DAYS.map((day) => deleted.timeslots![day] ?? []),
+          },
+        };
+      }
+      if (key === "campusIds") {
+        updateRequest = {
+          ...updateRequest,
+          campusChoices: {
+            deleted: [...deleted.campusIds!],
+          },
+        };
+      }
+    }
     return updateRequest;
   }
   return (
@@ -171,7 +187,6 @@ export function SaveButton() {
           title: "Updating profile...",
         });
         const response = await updateProfile(createUpdateRequest());
-        console.log(response);
         toaster.dismiss(loadingToast);
         if (response.success) {
           toaster.success({ title: response.message });
@@ -190,6 +205,9 @@ export function Prompt({ errors }: { errors: Errors }) {
       switch (code) {
         case "DUPLICATE_CAMPUS_CHOICE": {
           return "You've chosen the same campus twice.";
+        }
+        case "DUPLICATE_TIMESLOT": {
+          return `You've chosen the same timeslot more than once on ${error[code]?.map((t) => DAYS[t.day]).join(", ")}`;
         }
         default: {
           return "";
@@ -255,7 +273,7 @@ export default function Summary() {
         </Heading>
         <Prompt errors={errors} />
       </DialogHeader>
-      <DialogBody spaceY={5}>
+      <DialogBody flex={0} spaceY={5}>
         <VStack justifyContent={"center"} alignItems="center">
           <Card.Root
             width="320px"

@@ -251,7 +251,7 @@ export default function AcademicDetails({
           </Alert.Title>
         </Alert.Root>
       </DialogHeader>
-      <DialogBody spaceY={3}>
+      <DialogBody flex={0} spaceY={3}>
         <InputItem label="year">
           <Standings contentRef={contentRef} />
         </InputItem>

@@ -47,7 +47,7 @@ export default function Basics() {
           The Basics
         </Heading>
       </DialogHeader>
-      <DialogBody>
+      <DialogBody flex={0}>
         <VStack
           height="100%"
           alignItems={"stretch"}

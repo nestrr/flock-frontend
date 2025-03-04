@@ -1,19 +1,33 @@
-export const to12Hour = (timestamp: string) => {
-  const [hours, minutes] = timestamp.split(":");
-  const date = new Date();
-  date.setHours(parseInt(hours));
-  date.setMinutes(parseInt(minutes));
-  return date.toLocaleTimeString("en-US", {
-    hour: "numeric",
-    minute: "2-digit",
-    hour12: true,
-  });
-};
+import { type Timeslot } from "@/app/swr/profile";
+import dayjs from "dayjs";
+import objectSupport from "dayjs/plugin/objectSupport";
+import { TIME_REGEX } from "./constants";
+dayjs.extend(objectSupport);
 
-export const toDate = (timestamp: string) => {
-  const [hours, minutes] = timestamp.split(":");
-  const date = new Date();
-  date.setHours(parseInt(hours));
-  date.setMinutes(parseInt(minutes));
-  return date;
-};
+/**
+ * Normalizes times shown in timeslot to 12-hour clock format.
+ * @param timeslot A timeslot with `from` and `to` times written in 24-hour clock format
+ * @returns A timeslot with `from` and `to` times written in 12-hour clock format.
+ */
+export function normalizeTimeslot(timeslot: Timeslot) {
+  const { from, to, ...rest } = timeslot;
+  if (from.match(TIME_REGEX)) {
+    // If timeslots already formatted correctly, no need to reformat
+    return {
+      ...rest,
+      from,
+      to,
+    };
+  }
+  return {
+    ...rest,
+    from: dayjs({
+      hour: from.split(":")[0],
+      minute: from.split(":")[1],
+    }).format("hh:mm A"),
+    to: dayjs({
+      hour: to.split(":")[0],
+      minute: to.split(":")[1],
+    }).format("hh:mm A"),
+  };
+}

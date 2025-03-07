@@ -77,8 +77,11 @@ export default function Preferences({
   const { data: session, status: sessionStatus } = useSession();
   const [inputError, setInputError] = useState<string>("");
   const dispatch = useProfileEditDispatch();
-  const { edits, errors } = useProfileEdit();
-  const choices: Array<string> = edits.campusIds ?? [];
+  const { edits, errors, initial } = useProfileEdit();
+  const defaultChoices = initial.campusChoices?.map((c) => c.id) ?? [];
+  const choices: Array<string> = edits.campusIds
+    ? edits.campusIds
+    : defaultChoices;
 
   const {
     data: campuses,
@@ -147,7 +150,7 @@ export default function Preferences({
     dispatch({
       type: "delete",
       edit: {
-        campusIds: [choices[index]!],
+        campusIndices: [index],
       },
     });
   }
@@ -239,7 +242,9 @@ export default function Preferences({
           where do you like to study?{" "}
         </Heading>
       </DialogHeader>
-      <DialogBody spaceY={5}>{render()}</DialogBody>
+      <DialogBody flex={0} height="min-content" spaceY={5}>
+        {render()}
+      </DialogBody>
     </>
   );
 }

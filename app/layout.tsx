@@ -5,6 +5,7 @@ import { Montserrat_Alternates, Questrial, Arvo } from "next/font/google";
 import Footer from "@/app/shared/footer";
 import { Toaster } from "./shared/snippets/toaster";
 import { SessionProvider } from "next-auth/react";
+import { Stack, Container } from "@chakra-ui/react";
 
 const montserrat = Montserrat_Alternates({
   variable: "--font-montserrat-alternates",
@@ -48,7 +49,21 @@ export default function RootLayout({
           <ColorModeProvider>
             <Toaster />
             <Header />
-            {children}
+            <Container
+              as="main"
+              w="100%"
+              maxW="100%"
+              flex={1}
+              flexDir={"column"}
+              alignItems={"stretch"}
+              justifyContent={"stretch"}
+              py={5}
+              px={5}
+            >
+              <Stack as="section" h="100%" justifyContent={"center"}>
+                {children}
+              </Stack>
+            </Container>
             <Footer />
           </ColorModeProvider>
         </SessionProvider>

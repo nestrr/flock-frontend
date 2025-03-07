@@ -1,18 +1,25 @@
 "use client";
 import LocationPreferences from "./location-preferences";
-import { HStack, DialogFooter, IconButton } from "@chakra-ui/react";
+import { HStack, DialogFooter, IconButton, Container } from "@chakra-ui/react";
 import { DialogContent, DialogRoot } from "../shared/snippets/dialog";
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { LuArrowLeft, LuArrowRight } from "react-icons/lu";
 import Basics from "./basics";
-import TimePreferences from "./time-preferences";
+import TimePreferences from "./time-preferences/time-preferences";
 import AcademicDetails from "./academic-details";
 import Summary from "./summary";
+import { useRouter } from "next/navigation";
 
 export default function Page() {
   const contentRef = useRef<HTMLElement | HTMLDivElement>(null);
-  // TODO: useEffect to redirect to homepage if dialog closed.
+  const router = useRouter();
   const [open, setOpen] = useState(true);
+  const [screenIndex, setScreenIndex] = useState(0);
+
+  useEffect(() => {
+    if (!open) router.back();
+  }, [open, router]);
+
   const screens = [
     <Basics key="basics" />,
     <AcademicDetails
@@ -26,7 +33,6 @@ export default function Page() {
     <TimePreferences key="timePrefs" />,
     <Summary key="summary" />,
   ];
-  const [screenIndex, setScreenIndex] = useState(0);
 
   return (
     <>
@@ -40,9 +46,22 @@ export default function Page() {
         <DialogContent
           bg="secondary"
           color="secondary.fg"
+          height="90%"
+          mdDown={{ height: "100%", scrollbarWidth: "auto" }}
+          overflowY="auto"
+          scrollbarWidth={"thin"}
           ref={contentRef as React.RefObject<HTMLDivElement>}
+          py={2}
         >
-          {screens[screenIndex]}
+          <Container
+            display="flex"
+            flexDir="column"
+            justifyContent={"center"}
+            gapY={5}
+            flex="1"
+          >
+            {screens[screenIndex]}
+          </Container>
           <DialogFooter justifyContent={"center"}>
             <HStack w="90%" justifyContent="space-between">
               <IconButton

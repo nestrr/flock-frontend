@@ -1,6 +1,5 @@
 import { type User } from "next-auth";
 import { type DAYS } from "@/app/shared/constants";
-
 import useSWR, { type SWRConfiguration } from "swr";
 
 export type Campus = {
@@ -9,14 +8,13 @@ export type Campus = {
   description: string;
 };
 export interface Timeslot {
-  id: string;
+  day: number;
   from: string;
   to: string;
   reliability: number;
   flexibility: number;
 }
 export interface Degree {
-  id: string;
   programName: string;
   programCode: string;
   degreeTypeCode: string;
@@ -45,8 +43,8 @@ export interface Profile extends User {
   degree: Degree;
   firstLogin: boolean;
   roles: string[];
-  campusChoices: Campus[];
-  preferredTimes: Record<Day, Timeslot[]>;
+  campusChoices?: Campus[];
+  timeslots?: Record<Day, Timeslot[]>;
 }
 const defaultOptions: SWRConfiguration = {
   onErrorRetry: (error, key, _config, _revalidate, { retryCount }) => {
@@ -56,6 +54,7 @@ const defaultOptions: SWRConfiguration = {
     // Only retry up to 2 times.
     if (retryCount >= 2) return;
   },
+  revalidateIfStale: false,
 };
 
 const fetcher = async (url: string, token: string) => {
@@ -83,7 +82,7 @@ function fetchCheck(
 }
 
 export function useSelfProfile(accessToken: string | undefined) {
-  const { data, error, isLoading } = useSWR<User>(
+  const { data, error, isLoading } = useSWR<Profile>(
     fetchCheck(!!accessToken, accessToken, "/profile/me"),
     ([url, accessToken]: [url: string, accessToken: string]) =>
       fetcher(url, accessToken),

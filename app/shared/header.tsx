@@ -11,6 +11,7 @@ import {
   Badge,
   LinkOverlay,
   LinkBox,
+  PopoverCloseTrigger,
 } from "@chakra-ui/react";
 import { ColorModeButton } from "./snippets/color-mode";
 import { useState } from "react";
@@ -29,6 +30,7 @@ import { signIn } from "../actions/signin";
 import { useSession } from "next-auth/react";
 import { type Profile, useSelfProfile } from "../swr/profile";
 import { toaster } from "./snippets/toaster";
+import { useRouter } from "next/navigation";
 function LoginButton() {
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const trigger = (
@@ -68,6 +70,7 @@ function LoginButton() {
 function Welcome({ user }: { user: Profile }) {
   const firstName = user.name!.split(" ")[0];
   const { degree, name, image, roles, standing, campusChoices } = user;
+  const router = useRouter();
   return (
     <Box>
       <PopoverRoot>
@@ -140,9 +143,7 @@ function Welcome({ user }: { user: Profile }) {
                   letterSpacing={"wide"}
                   textTransform={"lowercase"}
                 >
-                  {campusChoices?.length === 0
-                    ? "Unlisted"
-                    : campusChoices[0]?.name}
+                  {!!campusChoices ? campusChoices[0]?.name : "Unlisted"}
                 </Tag>
               </HStack>
 
@@ -185,9 +186,16 @@ function Welcome({ user }: { user: Profile }) {
                 </Tag>
               </HStack>
               <HStack gap={10}>
-                <Button variant={"subtle"} colorPalette={"accent"} size="xs">
-                  Edit Profile{" "}
-                </Button>
+                <PopoverCloseTrigger asChild>
+                  <Button
+                    variant={"subtle"}
+                    colorPalette={"accent"}
+                    size="xs"
+                    onClick={() => router.push("/profile")}
+                  >
+                    Edit Profile{" "}
+                  </Button>
+                </PopoverCloseTrigger>
                 <LinkBox>
                   <Button
                     variant={"solid"}

@@ -1,33 +1,12 @@
-import { type Timeslot } from "@/app/swr/profile";
-import dayjs from "dayjs";
-import objectSupport from "dayjs/plugin/objectSupport";
-import { TIME_REGEX } from "./constants";
-dayjs.extend(objectSupport);
-
+import { type UnknownArray } from "type-fest";
 /**
- * Normalizes times shown in timeslot to 12-hour clock format.
- * @param timeslot A timeslot with `from` and `to` times written in 24-hour clock format
- * @returns A timeslot with `from` and `to` times written in 12-hour clock format.
+ * Counts occurrences of value in array
+ * @param array The array to evaluate
+ * @param target The target value
+ * @returns The count of occurrences
  */
-export function normalizeTimeslot(timeslot: Timeslot) {
-  const { from, to, ...rest } = timeslot;
-  if (from.match(TIME_REGEX)) {
-    // If timeslots already formatted correctly, no need to reformat
-    return {
-      ...rest,
-      from,
-      to,
-    };
-  }
-  return {
-    ...rest,
-    from: dayjs({
-      hour: from.split(":")[0],
-      minute: from.split(":")[1],
-    }).format("hh:mm A"),
-    to: dayjs({
-      hour: to.split(":")[0],
-      minute: to.split(":")[1],
-    }).format("hh:mm A"),
-  };
+export function countOccurrencesInArray(array: UnknownArray, target: unknown) {
+  return array.reduce((acc: number, currentValue: unknown) => {
+    return currentValue === target ? acc + 1 : acc;
+  }, 0);
 }

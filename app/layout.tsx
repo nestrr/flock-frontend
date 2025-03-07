@@ -1,7 +1,7 @@
 import { Provider as ColorModeProvider } from "@/app/shared/snippets/provider";
 import Header from "@/app/shared/header";
 import type { Metadata } from "next";
-import { Montserrat_Alternates, Questrial, Arvo } from "next/font/google";
+import { Montserrat_Alternates, Questrial } from "next/font/google";
 import Footer from "@/app/shared/footer";
 import { Toaster } from "./shared/snippets/toaster";
 import { SessionProvider } from "next-auth/react";
@@ -13,11 +13,6 @@ const montserrat = Montserrat_Alternates({
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
 });
 
-const arvo = Arvo({
-  variable: "--arvo",
-  subsets: ["latin"],
-  weight: ["400", "700"],
-});
 const questrial = Questrial({
   variable: "--font-questrial",
   subsets: ["latin"],
@@ -36,7 +31,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${montserrat.variable} ${arvo.variable} ${questrial.variable}`}
+        className={`${montserrat.variable} ${questrial.variable}`}
         style={{
           display: "flex",
           flexDirection: "column",

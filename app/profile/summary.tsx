@@ -19,7 +19,12 @@ import {
   useProfileEdit,
 } from "./shared/profile-edit-context";
 import { Avatar } from "../shared/snippets/avatar";
-import { useCampus, useProgram, useStanding } from "../swr/profile";
+import {
+  useCampuses,
+  usePrograms,
+  useSelfProfile,
+  useStandings,
+} from "../swr/profile";
 import { useSession } from "next-auth/react";
 import { type StringKeyOf } from "type-fest";
 import { type ProfileUpdateRequest, updateProfile } from "../actions/profile";
@@ -37,20 +42,21 @@ export function Program({
   const { data: session, status: sessionStatus } = useSession();
 
   const {
-    data: program,
+    data: programs,
     isLoading,
     error: error,
-  } = useProgram(session?.accessToken, mergedProgram);
+  } = usePrograms(session?.accessToken, mergedDegreeType);
   if (isLoading || sessionStatus === "loading")
     return <Skeleton width="5em" height="2em" bg="accent.muted/50" />;
   if (error)
     return (
       <Text fontStyle={"italic"}>Failed to load degree information 😔</Text>
     );
+
+  const program = programs?.find((p) => p.code === mergedProgram);
+  console.log(programs, mergedProgram);
   return program ? (
-    <Text textStyle="sm">
-      `${mergedDegreeType} @ ${program?.name}`
-    </Text>
+    <Text textStyle="sm">{`${mergedDegreeType} | ${program?.name}`}</Text>
   ) : (
     <Text fontStyle={"italic"} lineHeight={1}>
       no degree information found
@@ -59,29 +65,30 @@ export function Program({
 }
 export function Badges({
   primaryCampusId,
-  mergedStanding,
+  mergedStandingId,
 }: {
   primaryCampusId?: string;
-  mergedStanding: string;
+  mergedStandingId: string;
 }) {
   const { data: session, status: sessionStatus } = useSession();
   const {
-    data: campus,
-    isLoading: campusLoading,
-    error: campusError,
-  } = useCampus(session?.accessToken, primaryCampusId);
+    data: campuses,
+    isLoading: campusesLoading,
+    error: campusesError,
+  } = useCampuses(session?.accessToken);
   const {
-    data: standing,
-    isLoading: standingLoading,
+    data: standings,
+    isLoading: standingsLoading,
     error: standingError,
-  } = useStanding(session?.accessToken, mergedStanding);
+  } = useStandings(session?.accessToken);
   function renderCampus() {
-    if (campusLoading || sessionStatus === "loading")
+    if (campusesLoading || sessionStatus === "loading")
       return <Skeleton width="5em" height="1.5em" bg="accent.emphasized" />;
-    if (campusError && primaryCampusId)
+    if (campusesError && primaryCampusId)
       return (
         <Text fontStyle={"italic"}>Failed to load campus information 😔</Text>
       );
+    const campus = campuses[primaryCampusId ?? ""];
     return (
       <Badge
         textTransform={"lowercase"}
@@ -96,12 +103,13 @@ export function Badges({
     );
   }
   function renderStanding() {
-    if (standingLoading || sessionStatus === "loading")
+    if (standingsLoading || sessionStatus === "loading")
       return <Skeleton width="5em" height="1.5em" bg="accent.emphasized" />;
-    if (standingError && mergedStanding)
+    if (standingError && mergedStandingId)
       return (
         <Text fontStyle={"italic"}>Failed to load standing information 😔</Text>
       );
+    const standing = standings!.find((s) => s.id === mergedStandingId);
     return (
       <Badge
         textTransform={"lowercase"}
@@ -130,6 +138,8 @@ export function Badges({
 }
 export function SaveButton() {
   const { edits, deleted, errors } = useProfileEdit();
+  const { data: session } = useSession();
+  const { mutate } = useSelfProfile(session?.accessToken);
   function createUpdateRequest() {
     let updateRequest: ProfileUpdateRequest = {};
 
@@ -175,6 +185,19 @@ export function SaveButton() {
     }
     return updateRequest;
   }
+  async function update() {
+    const loadingToast = toaster.loading({
+      title: "Updating profile...",
+    });
+    const response = await updateProfile(createUpdateRequest());
+    toaster.dismiss(loadingToast);
+    if (response.success) {
+      mutate();
+      toaster.success({ title: response.message });
+    } else {
+      toaster.error({ title: response.message });
+    }
+  }
   return (
     <Button
       variant={"surface"}
@@ -182,18 +205,7 @@ export function SaveButton() {
       colorPalette={"secondary"}
       size="xs"
       disabled={Object.keys(errors).length > 0}
-      onClick={async () => {
-        const loadingToast = toaster.loading({
-          title: "Updating profile...",
-        });
-        const response = await updateProfile(createUpdateRequest());
-        toaster.dismiss(loadingToast);
-        if (response.success) {
-          toaster.success({ title: response.message });
-        } else {
-          toaster.error({ title: response.message });
-        }
-      }}
+      onClick={update}
     >
       Save
     </Button>
@@ -207,7 +219,7 @@ export function Prompt({ errors }: { errors: Errors }) {
           return "You've chosen the same campus twice.";
         }
         case "DUPLICATE_TIMESLOT": {
-          return `You've chosen the same timeslot more than once on ${error[code]?.map((t) => DAYS[t.day]).join(", ")}`;
+          return `You've chosen the same timeslot more than once on ${error[code]?.map((t) => DAYS[t.day]).join(", ")}.`;
         }
         default: {
           return "";
@@ -262,7 +274,7 @@ export default function Summary() {
   const { name, bio, image } = { ...initial, ...edits };
   const primaryCampusId = campusIds?.[0] ?? campusChoices?.[0]?.id;
   const mergedDegreeType = degree?.degreeTypeCode ?? degreeTypeCode;
-  const mergedStanding = standing?.id ?? standingId;
+  const mergedStandingId = standing?.id ?? standingId;
   const mergedProgram = programCode ?? degree?.programCode;
 
   return (
@@ -310,7 +322,7 @@ export default function Summary() {
               </Card.Description>
               <Badges
                 primaryCampusId={primaryCampusId}
-                mergedStanding={mergedStanding}
+                mergedStandingId={mergedStandingId}
               />
             </Card.Body>
             <Card.Footer justifyContent={"center"}>

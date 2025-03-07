@@ -19,7 +19,7 @@ import {
   useProfileEditDispatch,
 } from "../shared/profile-edit-context";
 import { type UnknownRecord } from "type-fest";
-import { normalizeTimeslot } from "../shared/util";
+import { normalizeTimeslot } from "@/app/shared/util";
 
 function getSlots(allChanges: Omit<ProfileEditSummary, "errors">) {
   const { initial, edits, deleted } = allChanges;

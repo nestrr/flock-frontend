@@ -9,6 +9,7 @@ import {
 import { createContext, type Dispatch, use, useMemo, useReducer } from "react";
 import type { PartialDeep, Simplify, UnionToIntersection } from "type-fest";
 import { type EditErrorCode, type EditError } from "./errors";
+import { countOccurrencesInArray } from "./util";
 
 export type ProfileEditSummary = {
   /** The initial state of the profile before any changes are made. */
@@ -205,9 +206,6 @@ function mergeCampusIds(
   currentEdit: Edit
 ): CampusIdsMerge {
   const { campusIds: edit } = currentEdit;
-  const { initial, edits, deleted } = allChanges;
-  const defaultIds = initial.campusChoices?.map((c) => c.id) ?? [];
-  const existingIds = edits?.campusIds ? edits.campusIds : defaultIds;
   if (edit) {
     const deletedCampusIds = updateDeletedCampusIds(allChanges, edit);
     return deletedCampusIds
@@ -217,19 +215,26 @@ function mergeCampusIds(
         }
       : { campusIds: edit };
   }
-  if (existingIds.length) {
-    const { campusIds: deletedCampusIds } = deleted;
-    if (deletedCampusIds) {
-      return {
-        campusIds: existingIds,
-        deleted: { campusIds: deleted.campusIds },
-      };
-    } else {
-      return { campusIds: existingIds };
-    }
-  }
 
   return {};
+}
+
+/**
+ *
+ * @param allChanges The current state of the profile edits, which includes the initial profile before any changes, edits that were made, and deleted items.
+ * @param currentEdit The edit(s) to be applied to the profile
+ * @returns The latest state of edits as far as degree information is concerned.
+ */
+function mergeDegree(allChanges: ProfileEditSummary, currentEdit: Edit) {
+  const { initial, edits } = allChanges;
+  const { degree: degreeInInitial } = initial;
+  let { degreeTypeCode } = edits;
+  if (!degreeTypeCode && currentEdit?.programCode)
+    degreeTypeCode = degreeInInitial?.degreeTypeCode;
+  return {
+    degreeTypeCode,
+    programCode: currentEdit?.programCode,
+  };
 }
 
 /**
@@ -244,27 +249,25 @@ function handleEdits(allChanges: ProfileEditSummary, currentEdit: Edit) {
 
   const timeslotsMerged = mergeTimeslots(allChanges, currentEdit);
   const campusIdsMerged = mergeCampusIds(allChanges, currentEdit);
+  const degreeMerged = mergeDegree(allChanges, currentEdit);
   const deletedInMerge = {
     ...(timeslotsMerged.deleted ?? {}),
     ...(campusIdsMerged.deleted ?? {}),
   };
   const { timeslots } = timeslotsMerged;
+  const { degreeTypeCode, programCode } = degreeMerged;
   const { campusIds } = campusIdsMerged;
 
   function getDeleted() {
     return { ...deleted, ...deletedInMerge };
   }
   function getEdits() {
-    if (timeslots && campusIds)
-      return {
-        ...precedingEdits,
-        ...simpleChanges,
-        timeslots,
-        campusIds,
-      };
-    if (timeslots) return { ...precedingEdits, ...simpleChanges, timeslots };
-    if (campusIds) return { ...precedingEdits, ...simpleChanges, campusIds };
-    return { ...precedingEdits, ...simpleChanges };
+    let edits = { ...precedingEdits, ...simpleChanges };
+    const toMerge = { timeslots, campusIds, degreeTypeCode, programCode };
+    for (const [key, value] of Object.entries(toMerge)) {
+      if (value) edits = { ...edits, [key]: value };
+    }
+    return edits;
   }
 
   return {
@@ -446,8 +449,12 @@ function handleCampusDeletion(
   const campusIdsInInitial = initial.campusChoices?.map((c) => c.id) ?? [];
   const existing = edits.campusIds ? edits.campusIds : campusIdsInInitial;
   campusIndices.forEach((index) => {
-    // Only add campus ID to staleCampuses if it was there before any edits were made. Otherwise, nothing needs to be deleted from the backend.
-    if (campusIdsInInitial.includes(existing[index])) {
+    // Only add campus ID to staleCampuses if it was there only once before any edits were made.
+    // Otherwise, nothing needs to be deleted from the backend - as we are either resolving a duplicate or removing a campus that was only added in current edit.
+    if (
+      countOccurrencesInArray(existing, existing[index]) === 1 &&
+      campusIdsInInitial.includes(existing[index])
+    ) {
       staleCampuses.add(existing[index]);
     }
     existing.splice(index, 1);

@@ -57,7 +57,7 @@ export default function Page() {
             display="flex"
             flexDir="column"
             justifyContent={"center"}
-            gapY={5}
+            gapY={3}
             flex="1"
           >
             {screens[screenIndex]}

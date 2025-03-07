@@ -11,7 +11,7 @@ import React, { useEffect } from "react";
 import { LuPencilLine, LuTrash } from "react-icons/lu";
 import { Slider } from "../../shared/snippets/slider";
 import { type Timeslot } from "../../swr/profile";
-import { normalizeTimeslot } from "../shared/util";
+import { normalizeTimeslot } from "@/app/shared/util";
 
 export default function TimeslotRow({
   timeslot,

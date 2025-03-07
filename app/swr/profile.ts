@@ -91,6 +91,30 @@ export function useSelfProfile(accessToken: string | undefined) {
 
   return {
     data,
+    mutate,
+    error,
+    isLoading,
+  };
+}
+
+export function useProfiles(
+  accessToken: string | undefined,
+  page: number = 1,
+  size: number = 8
+) {
+  const { data, error, isLoading } = useSWR<Profile[]>(
+    fetchCheck(
+      !!accessToken,
+      accessToken,
+      `/profile?page=${encodeURIComponent(page)}&size=${encodeURIComponent(size)}`
+    ),
+    ([url, accessToken]: [url: string, accessToken: string]) =>
+      fetcher(url, accessToken),
+    defaultOptions
+  );
+
+  return {
+    data,
     error,
     isLoading,
   };

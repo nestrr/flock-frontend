@@ -52,7 +52,6 @@ export default function Basics() {
           height="100%"
           alignItems={"stretch"}
           justifyContent={"center"}
-          px={10}
           gap={3}
         >
           <Stack

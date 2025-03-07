@@ -250,8 +250,23 @@ export default function AcademicDetails({
             👀 Can&apos;t find your path in this list? Shoot us a message!
           </Alert.Title>
         </Alert.Root>
+        <Alert.Root
+          size="sm"
+          bg="accent.muted/50"
+          color="primary.fg"
+          fontSize="sm"
+          alignItems={"center"}
+          justifyContent={"center"}
+        >
+          <Alert.Title alignSelf="end">
+            <span>
+              💡 You&apos;ll need to select a level {<strong>and</strong>} a
+              program to update your degree information.
+            </span>
+          </Alert.Title>
+        </Alert.Root>
       </DialogHeader>
-      <DialogBody flex={0} spaceY={3}>
+      <DialogBody flex={0} spaceY={4}>
         <InputItem label="year">
           <Standings contentRef={contentRef} />
         </InputItem>

@@ -41,7 +41,7 @@ export interface Profile extends User {
   bio: string;
   standing: Standing;
   degree: Degree;
-  firstLogin: boolean;
+  newAccount: boolean;
   roles: string[];
   campusChoices?: Campus[];
   timeslots?: Record<Day, Timeslot[]>;
@@ -82,7 +82,7 @@ function fetchCheck(
 }
 
 export function useSelfProfile(accessToken: string | undefined) {
-  const { data, error, isLoading } = useSWR<Profile>(
+  const { data, error, mutate, isLoading } = useSWR<Profile>(
     fetchCheck(!!accessToken, accessToken, "/profile/me"),
     ([url, accessToken]: [url: string, accessToken: string]) =>
       fetcher(url, accessToken),

@@ -3,7 +3,6 @@ import { Slider } from "@/app/shared/snippets/slider";
 import { normalizeTimeslot } from "@/app/shared/util";
 import { type Timeslot } from "@/app/swr/profile";
 import { Table, Container } from "@chakra-ui/react";
-import React from "react";
 
 export default function TimeslotRow({ timeslot }: { timeslot: Timeslot }) {
   const { from, to, reliability, flexibility } = normalizeTimeslot(timeslot);

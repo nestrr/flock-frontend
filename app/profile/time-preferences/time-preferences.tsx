@@ -7,6 +7,7 @@ import { DialogBody, DialogHeader } from "../../shared/snippets/dialog";
 import { FaRegSadTear } from "react-icons/fa";
 import TimeslotTable from "./timeslot-table";
 import NewTimeslot from "./new-timeslot";
+import ErrorAlert from "./error-alert";
 
 export default function TimePreferences() {
   const tabs = useTabs({ defaultValue: DAYS[0] });
@@ -27,7 +28,7 @@ export default function TimePreferences() {
         </Heading>
         <Alert.Root
           size="sm"
-          status={"error"}
+          status={"warning"}
           alignItems={"center"}
           fontSize={"xs"}
           justifyContent={"center"}
@@ -40,6 +41,7 @@ export default function TimePreferences() {
             fix this ASAP. Adding and deleting them works just fine, though!
           </Alert.Title>
         </Alert.Root>
+        <ErrorAlert />
       </DialogHeader>
       <DialogBody flex={0} spaceY={5}>
         <Tabs.RootProvider value={tabs} lazyMount>

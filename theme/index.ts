@@ -2,7 +2,6 @@ import {
   createSystem,
   defaultConfig,
   defineConfig,
-  defineRecipe,
   defineSemanticTokens,
   defineStyle,
   defineTokens,
@@ -310,8 +309,8 @@ const colorSemanticTokens = defineSemanticTokens({
       },
       emphasized: {
         value: {
-          _light: "{colors.secondaryLight.300}",
-          _dark: "{colors.secondaryDark.900}",
+          _light: "{colors.secondaryLight.400}",
+          _dark: "{colors.secondaryDark.800}",
         },
       },
       panel: {
@@ -329,23 +328,7 @@ const colorSemanticTokens = defineSemanticTokens({
     },
   },
 });
-const headingRecipe = defineRecipe({
-  variants: {
-    size: {
-      xl: {
-        fontFamily: "Arvo",
-      },
 
-      "2xl": {
-        fontFamily: "Arvo",
-      },
-
-      "3xl": {
-        fontFamily: "Arvo",
-      },
-    },
-  },
-});
 const theme = defineConfig({
   theme: {
     tokens: {
@@ -358,9 +341,6 @@ const theme = defineConfig({
         },
       },
       ...colorTokens,
-    },
-    recipes: {
-      heading: { ...defaultConfig.theme?.recipes?.heading, ...headingRecipe },
     },
     semanticTokens: { ...colorSemanticTokens },
   },

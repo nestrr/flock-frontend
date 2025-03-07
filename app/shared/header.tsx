@@ -11,7 +11,8 @@ import {
   Badge,
   LinkOverlay,
   LinkBox,
-  PopoverCloseTrigger,
+  usePopover,
+  PopoverRootProvider,
 } from "@chakra-ui/react";
 import { ColorModeButton } from "./snippets/color-mode";
 import { useState } from "react";
@@ -20,7 +21,6 @@ import { ringCss } from "@/theme";
 import {
   PopoverBody,
   PopoverContent,
-  PopoverRoot,
   PopoverTrigger,
 } from "./snippets/popover";
 import { Tag } from "./snippets/tag";
@@ -30,7 +30,6 @@ import { signIn } from "../actions/signin";
 import { useSession } from "next-auth/react";
 import { type Profile, useSelfProfile } from "../swr/profile";
 import { toaster } from "./snippets/toaster";
-import { useRouter } from "next/navigation";
 function LoginButton() {
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const trigger = (
@@ -70,10 +69,10 @@ function LoginButton() {
 function Welcome({ user }: { user: Profile }) {
   const firstName = user.name!.split(" ")[0];
   const { degree, name, image, roles, standing, campusChoices } = user;
-  const router = useRouter();
+  const popover = usePopover();
   return (
     <Box>
-      <PopoverRoot>
+      <PopoverRootProvider value={popover}>
         <PopoverTrigger
           _hover={{
             bg: "secondary.emphasized",
@@ -108,7 +107,12 @@ function Welcome({ user }: { user: Profile }) {
             </Text>
           </HStack>{" "}
         </PopoverTrigger>
-        <PopoverContent width="100%" bg="secondary" aria-label="User Info">
+        <PopoverContent
+          portalled={false}
+          width="100%"
+          bg="secondary"
+          aria-label="User Info"
+        >
           <PopoverBody>
             <VStack
               alignItems={"center"}
@@ -186,16 +190,26 @@ function Welcome({ user }: { user: Profile }) {
                 </Tag>
               </HStack>
               <HStack gap={10}>
-                <PopoverCloseTrigger asChild>
-                  <Button
-                    variant={"subtle"}
-                    colorPalette={"accent"}
-                    size="xs"
-                    onClick={() => router.push("/profile")}
+                <Button
+                  variant={"subtle"}
+                  colorPalette={"accent"}
+                  size="xs"
+                  p={0}
+                  onClick={() => popover.setOpen(false)}
+                >
+                  <Link
+                    href="/profile"
+                    style={{
+                      height: "100%",
+                      width: "100%",
+                      padding: "8px 16px",
+                      textAlign: "center",
+                    }}
+                    prefetch={true}
                   >
-                    Edit Profile{" "}
-                  </Button>
-                </PopoverCloseTrigger>
+                    Edit Profile
+                  </Link>
+                </Button>
                 <LinkBox>
                   <Button
                     variant={"solid"}
@@ -213,7 +227,7 @@ function Welcome({ user }: { user: Profile }) {
             </VStack>
           </PopoverBody>
         </PopoverContent>
-      </PopoverRoot>
+      </PopoverRootProvider>
     </Box>
   );
 }

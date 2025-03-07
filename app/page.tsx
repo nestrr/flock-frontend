@@ -1,6 +1,11 @@
+"use server";
+import { auth } from "@/auth";
 import { Heading } from "@chakra-ui/react";
+import { redirect } from "next/navigation";
 
-export default function Home() {
+export default async function Home() {
+  const session = await auth();
+  if (session) redirect("/dashboard");
   return (
     <>
       <Heading as="h1" size="6xl" letterSpacing={"wide"} textAlign={"center"}>
@@ -12,4 +17,3 @@ export default function Home() {
     </>
   );
 }
-// bird emoji is 🐦

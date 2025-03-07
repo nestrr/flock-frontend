@@ -2,9 +2,8 @@
 import { signIn as authSignIn } from "@/auth";
 export const signIn = async () => {
   try {
-    await authSignIn("microsoft-entra-id");
+    await authSignIn("microsoft-entra-id", { redirectTo: "/dashboard" });
   } catch (error) {
-    console.log(error);
     throw error;
   }
 };

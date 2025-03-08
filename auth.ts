@@ -26,8 +26,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     // based on guide: https://authjs.dev/guides/integrating-third-party-backends#storing-the-token-in-the-session
     async jwt({ token, account, trigger, user }) {
       if ((trigger === "signIn" || trigger === "signUp") && !!account) {
-        console.log(account);
-        fetch(`${process.env.API_URL!}/profile/me`, {
+        fetch(`${process.env.NEXT_PUBLIC_API_URL!}/profile/me`, {
           method: "POST",
           headers: {
             Authorization: `Bearer ${account?.access_token}`,

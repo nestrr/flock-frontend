@@ -21,7 +21,7 @@ type ProfileHeaderProps = { profile: Profile } & (
 );
 export default function ProfileHeader({
   profile,
-  condensed,
+  condensed: withActions,
   setDialogOpen,
 }: ProfileHeaderProps) {
   const { image, name, degree } = profile;
@@ -29,9 +29,12 @@ export default function ProfileHeader({
     <HStack gap="3" p={0} justifyContent="space-between">
       <Group>
         <Avatar
+          bgGradient="to-tr"
+          gradientFrom={{ _dark: "green.600", _light: "green.400" }}
+          gradientTo={{ _dark: "yellow.600", _light: "yellow.400" }}
+          gradientVia={{ _dark: "pink.600", _light: "pink.300" }}
           src={image}
           name={name}
-          bg="primary.contrast"
           variant={"outline"}
         />
         <Stack gap="0">
@@ -50,7 +53,7 @@ export default function ProfileHeader({
           )}
         </Stack>
       </Group>
-      {condensed && (
+      {withActions && (
         <Group>
           <IconButton
             variant="subtle"

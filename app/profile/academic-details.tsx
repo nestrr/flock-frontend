@@ -18,7 +18,7 @@ import {
 } from "../shared/snippets/select";
 import { useSession } from "next-auth/react";
 import { useDegreeTypes, usePrograms, useStandings } from "../swr/profile";
-import InputItem from "./shared/input-item";
+import InputItem from "../shared/input-item";
 import {
   useProfileEdit,
   useProfileEditDispatch,

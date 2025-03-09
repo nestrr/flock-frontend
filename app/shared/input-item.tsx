@@ -1,26 +1,38 @@
 "use client";
-import { Group, Input, InputAddon, Text } from "@chakra-ui/react";
+import {
+  Group,
+  Input,
+  InputAddon,
+  type InputProps,
+  Text,
+} from "@chakra-ui/react";
 import React from "react";
 import { InputGroup } from "@/app/shared/snippets/input-group";
-
-export default function InputItem({
-  value,
-  startElement,
-  locked,
-  children,
-  label,
-  endAddon,
-  colorPalette = "accent.muted/50",
-}: {
-  value?: string;
-  startElement?: React.ReactNode;
-  children?: React.ReactNode;
-  locked?: boolean;
-  lockDescription?: string;
-  label: string;
-  endAddon?: React.ReactNode;
-  colorPalette?: string;
-}) {
+import { type Simplify } from "type-fest";
+export type InputPropsType = Simplify<
+  {
+    value?: string;
+    startElement?: React.ReactNode;
+    children?: React.ReactNode;
+    locked?: boolean;
+    lockDescription?: string;
+    label: string;
+    endAddon?: React.ReactNode;
+    colorPalette?: string;
+    placeholder?: string;
+  } & InputProps
+>;
+export default function InputItem(inputProps: InputPropsType) {
+  const {
+    value,
+    startElement,
+    locked,
+    children,
+    label,
+    endAddon,
+    colorPalette = "accent.muted/50",
+    ...rest
+  } = inputProps;
   return (
     <Group
       attached
@@ -50,6 +62,7 @@ export default function InputItem({
             value={value}
             w={"100%"}
             rounded="none"
+            {...rest}
           ></Input>
         </InputGroup>
       )}

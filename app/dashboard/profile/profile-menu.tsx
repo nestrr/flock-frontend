@@ -1,16 +1,38 @@
 import { MenuContent, MenuItem } from "@/app/shared/snippets/menu";
+import { HStack, Portal, Text, useMenuContext } from "@chakra-ui/react";
+import { useGroupDispatch } from "../group/group-context";
+import { type Profile } from "@/app/swr/profile";
 
-export default function ProfileMenu() {
-  return (
-    <>
+export default function ProfileMenu({ profile }: { profile: Profile }) {
+  const dispatch = useGroupDispatch();
+  const { open } = useMenuContext();
+  return open ? (
+    <Portal>
       <MenuContent>
+        <MenuItem
+          fontWeight="semibold"
+          letterSpacing="wider"
+          value="add"
+          _hover={{ bg: "accent" }}
+          onClick={() => {
+            dispatch({ type: "addMember", payload: profile });
+          }}
+        >
+          <HStack w="100%" gap={5} justifyContent={"space-between"}>
+            <Text>Add to group</Text>
+            <Text>👥</Text>
+          </HStack>
+        </MenuItem>
         <MenuItem
           fontWeight="semibold"
           letterSpacing="wider"
           value="block"
           _hover={{ bg: "bg.danger" }}
         >
-          Block 🚫
+          <HStack w="100%" justifyContent={"space-between"}>
+            <Text>Block</Text>
+            <Text> 🚫</Text>
+          </HStack>
         </MenuItem>
         <MenuItem
           fontWeight="semibold"
@@ -18,9 +40,14 @@ export default function ProfileMenu() {
           value="report"
           _hover={{ bg: "bg.danger" }}
         >
-          Report 🚩
+          <HStack w="100%" justifyContent={"space-between"}>
+            <Text>Report</Text>
+            <Text>🚩</Text>
+          </HStack>
         </MenuItem>
       </MenuContent>
-    </>
+    </Portal>
+  ) : (
+    <></>
   );
 }

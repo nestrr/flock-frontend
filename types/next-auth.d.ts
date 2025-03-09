@@ -1,10 +1,9 @@
 import _NextAuth, { type _DefaultSession } from "next-auth";
-import { type User as _User } from "next-auth";
-import { type Profile } from "@/app/swr/profile";
+import { type User } from "next-auth";
 declare module "next-auth" {
   interface Session {
     accessToken?: string;
-    user: Profile;
+    user: User & { id: string };
   }
   interface JWT {
     accessToken?: string;

@@ -24,7 +24,7 @@ import { ringCss } from "@/theme";
 import { Avatar } from "../shared/snippets/avatar";
 import { FaDiscord } from "react-icons/fa";
 import InputIcon from "./shared/input-icon";
-import InputItem from "./shared/input-item";
+import InputItem from "../shared/input-item";
 import {
   useProfileEdit,
   useProfileEditDispatch,
@@ -33,7 +33,7 @@ import {
 export default function Basics() {
   const { initial: profile } = useProfileEdit();
   const dispatch = useProfileEditDispatch();
-  const debouncedUpdate = debounce((dispatch, profile, newBio) => {
+  const debouncedUpdate = debounce((dispatch, _profile, newBio) => {
     dispatch({
       type: "update",
       edit: { bio: newBio },
@@ -67,7 +67,10 @@ export default function Basics() {
             <Avatar
               name={name}
               src={image}
-              bg="primary.contrast"
+              bgGradient="to-tr"
+              gradientFrom={{ _dark: "green.600", _light: "green.400" }}
+              gradientTo={{ _dark: "yellow.600", _light: "yellow.400" }}
+              gradientVia={{ _dark: "pink.600", _light: "pink.300" }}
               css={ringCss}
               aspectRatio={"square"}
               h="5em"

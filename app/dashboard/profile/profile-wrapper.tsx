@@ -12,10 +12,11 @@ export default function ProfileWrapper({ profile }: { profile: ProfileType }) {
       placement: "bottom-end",
     },
   });
+
   return (
     <MenuRootProvider value={menu}>
       <CondensedProfile profile={profile} dialog={dialog} />
-      <ProfileMenu />
+      <ProfileMenu profile={profile} />
       <FullProfile profile={profile} dialog={dialog} />
     </MenuRootProvider>
   );

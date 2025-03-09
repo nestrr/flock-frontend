@@ -40,6 +40,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         });
         return {
           ...token,
+          id: account.userId,
           accessToken: account?.access_token,
           expiresAt: account?.expires_at,
           refreshToken: account?.refresh_token,
@@ -89,8 +90,12 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     },
     async session({ session, token }) {
       const accessToken = session?.accessToken ?? token.accessToken;
-
-      return { ...session, accessToken, user: session.user };
+      const userId = session?.userId ?? token.sub;
+      return {
+        ...session,
+        accessToken,
+        user: { ...session.user, id: userId },
+      };
     },
   },
 });

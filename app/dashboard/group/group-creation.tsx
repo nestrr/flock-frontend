@@ -175,6 +175,7 @@ function GroupActions() {
     if (response.success) {
       mutate();
       toaster.success({ title: `Invites sent! 🎉` });
+      dispatch({ type: "clear" });
     } else {
       toaster.error({ title: `🙁 Something went wrong. ${response.message}` });
     }

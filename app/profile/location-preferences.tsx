@@ -19,7 +19,7 @@ import {
   SelectValueText,
 } from "../shared/snippets/select";
 import InputIcon from "./shared/input-icon";
-import InputItem from "./shared/input-item";
+import InputItem from "../shared/input-item";
 import {
   useProfileEdit,
   useProfileEditDispatch,

@@ -7,15 +7,21 @@ import {
   Heading,
   Spinner,
   VStack,
+  useDrawer,
+  DrawerRootProvider,
 } from "@chakra-ui/react";
 import { LuFolder, LuSquareCheck, LuUser } from "react-icons/lu";
 import { useProfiles } from "../swr/profile";
 import { useSession } from "next-auth/react";
 import ProfileWrapper from "./profile/profile-wrapper";
 import FailedLoad from "../shared/failed-load";
+import { GroupProvider } from "./group/group-context";
+import GroupBar from "./group/group-bar";
+import GroupCreation from "./group/group-creation";
 
 function AllProfiles() {
   const { data: session, status: sessionStatus } = useSession();
+  const drawer = useDrawer();
   const {
     data: profiles,
     isLoading,
@@ -34,21 +40,28 @@ function AllProfiles() {
         />
       </VStack>
     );
-  if (error) return <FailedLoad />;
+  if (error || !session) return <FailedLoad />;
   return (
-    <SimpleGrid
-      columns={[4]}
-      gap="1em"
-      width="min-fit"
-      alignItems={"center"}
-      justifyItems={"center"}
-    >
-      {profiles?.map((profile, index) => (
-        <GridItem key={index} colSpan={{ base: 4, lg: 2, xl: 1 }}>
-          <ProfileWrapper profile={profile} />
-        </GridItem>
-      ))}
-    </SimpleGrid>
+    <GroupProvider userId={session.user.id}>
+      <SimpleGrid
+        columns={[4]}
+        gap="1em"
+        width="min-fit"
+        alignItems={"center"}
+        justifyItems={"center"}
+      >
+        {profiles?.map((profile, index) => (
+          <GridItem key={index} colSpan={{ base: 4, lg: 2, xl: 1 }}>
+            <ProfileWrapper profile={profile} />
+          </GridItem>
+        ))}
+      </SimpleGrid>
+
+      <DrawerRootProvider size={{ mdDown: "full", base: "md" }} value={drawer}>
+        <GroupBar />
+        <GroupCreation />
+      </DrawerRootProvider>
+    </GroupProvider>
   );
 }
 export default function StudyPartners() {

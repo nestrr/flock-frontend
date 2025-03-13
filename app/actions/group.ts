@@ -2,7 +2,7 @@
 
 import { auth } from "@/auth";
 import { type ServerActionResponse } from "./types";
-import { type Group } from "../dashboard/group/group-context";
+import { type Group } from "../dashboard/new-group/group-context";
 export const saveGroup = async (
   group: Group
 ): Promise<ServerActionResponse> => {

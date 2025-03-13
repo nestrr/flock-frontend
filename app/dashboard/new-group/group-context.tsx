@@ -20,7 +20,7 @@ export type Group = {
   creatorId: string;
   name: string;
   description: string;
-  image?: string;
+  image?: string | null;
   errors: Set<GroupError>;
 };
 
@@ -66,7 +66,7 @@ function createDefaultGroup(userId: string): Group {
     creatorId: userId,
     name: "",
     description: "",
-    image: "",
+    image: null,
     errors: new Set([]),
   };
 }

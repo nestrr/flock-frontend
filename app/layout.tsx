@@ -13,8 +13,8 @@ const montserrat = Montserrat_Alternates({
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
 });
 
-const questrial = Geologica({
-  variable: "--font-mona-sans",
+const geologica = Geologica({
+  variable: "--font-geologica",
   subsets: ["latin"],
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
 });
@@ -31,7 +31,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${montserrat.variable} ${questrial.variable}`}
+        className={`${montserrat.variable} ${geologica.variable}`}
         style={{
           display: "flex",
           flexDirection: "column",

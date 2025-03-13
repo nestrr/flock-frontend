@@ -29,13 +29,8 @@ export default function CondensedProfile({
           profile={profile}
         />
       </Card.Header>
-      <Card.Body
-        pb={0}
-        pt={5}
-        color="primary.fg"
-        justifyContent={"space-between"}
-      >
-        <Card.Description color="primary.fg" asChild>
+      <Card.Body pb={0} pt={5} justifyContent={"space-between"}>
+        <Card.Description asChild>
           <Bio bio={bio} />
         </Card.Description>
       </Card.Body>

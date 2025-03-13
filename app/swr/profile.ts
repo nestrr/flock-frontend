@@ -96,6 +96,21 @@ export function useSelfProfile(accessToken: string | undefined) {
     isLoading,
   };
 }
+export function useProfile(accessToken: string | undefined, id: string) {
+  const { data, error, mutate, isLoading } = useSWR<Profile>(
+    fetchCheck(!!accessToken && !!id, accessToken, `/profile/${id}`),
+    ([url, accessToken]: [url: string, accessToken: string]) =>
+      fetcher(url, accessToken),
+    defaultOptions
+  );
+
+  return {
+    data,
+    mutate,
+    error,
+    isLoading,
+  };
+}
 
 export function useProfiles(
   accessToken: string | undefined,

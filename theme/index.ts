@@ -39,17 +39,17 @@ const colorTokens = defineTokens({
       900: { value: "#280b19" },
     },
     secondaryDark: {
-      main: { value: "#8ccd42" },
-      50: { value: "#f3faeb" },
-      100: { value: "#e6f4d7" },
-      200: { value: "#ceeaae" },
-      300: { value: "#b5df86" },
-      400: { value: "#9dd45e" },
-      500: { value: "#84c936" },
-      600: { value: "#6aa12b" },
-      700: { value: "#4f7920" },
-      800: { value: "#355115" },
-      900: { value: "#1a280b" },
+      main: { value: "#FFF3D4" },
+      50: { value: "#FFF3D4" },
+      100: { value: "#FFE6AA" },
+      200: { value: "#FFD87F" },
+      300: { value: "#FFCA55" },
+      400: { value: "#F5B730" },
+      500: { value: "#D49B1A" },
+      600: { value: "#B37F0E" },
+      700: { value: "#8F6400" },
+      800: { value: "#453204" },
+      900: { value: "#241805" },
     },
     accentLight: {
       main: { value: "#ade6b5" },
@@ -107,17 +107,17 @@ const colorTokens = defineTokens({
       900: { value: "#1b2d06" },
     },
     accentDark: {
-      main: { value: "#195221" },
-      50: { value: "#ebf9ed" },
-      100: { value: "#d8f3dc" },
-      200: { value: "#b1e7b8" },
-      300: { value: "#8adb95" },
-      400: { value: "#63cf71" },
-      500: { value: "#3cc34e" },
-      600: { value: "#309c3e" },
-      700: { value: "#24752f" },
-      800: { value: "#184e1f" },
-      900: { value: "#0c2710" },
+      main: { value: "#8ccd42" },
+      50: { value: "#f3faeb" },
+      100: { value: "#e6f4d7" },
+      200: { value: "#ceeaae" },
+      300: { value: "#b5df86" },
+      400: { value: "#9dd45e" },
+      500: { value: "#84c936" },
+      600: { value: "#6aa12b" },
+      700: { value: "#4f7920" },
+      800: { value: "#355115" },
+      900: { value: "#1a280b" },
     },
   },
 });
@@ -164,7 +164,7 @@ const colorSemanticTokens = defineSemanticTokens({
       panel: {
         value: {
           _light: "{colors.secondaryLight.200}",
-          _dark: "{colors.secondaryDark.700}",
+          _dark: "{colors.secondaryDark.800}",
         },
       },
       solid: {
@@ -204,7 +204,7 @@ const colorSemanticTokens = defineSemanticTokens({
       subtle: {
         value: {
           _light: "{colors.accentLight.200}",
-          _dark: "{colors.accentDark.200}",
+          _dark: "{colors.accentDark.300}",
         },
       },
       muted: {
@@ -298,7 +298,7 @@ const colorSemanticTokens = defineSemanticTokens({
       subtle: {
         value: {
           _light: "{colors.secondaryLight.200}",
-          _dark: "{colors.secondaryDark.800}",
+          _dark: "{colors.secondaryDark.900}",
         },
       },
       muted: {
@@ -352,6 +352,19 @@ const theme = defineConfig({
       ...colorTokens,
     },
     semanticTokens: { ...colorSemanticTokens },
+    slotRecipes: {
+      segmentGroup: {
+        ...defaultConfig.theme?.slotRecipes?.segmentGroup,
+        base: {
+          root: {
+            display: "flex",
+            minW: "none",
+            bg: "transparent",
+          },
+        },
+        slots: defaultConfig.theme?.slotRecipes?.segmentGroup?.slots ?? [],
+      },
+    },
   },
 });
 const config = mergeConfigs(defaultConfig, theme);
@@ -362,5 +375,3 @@ export const ringCss = defineStyle({
   outlineOffset: "2px",
   outlineStyle: "solid",
 });
-
-console.log(system);

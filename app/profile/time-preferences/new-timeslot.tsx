@@ -145,7 +145,7 @@ export default function NewTimeslot() {
                 setReliability(Math.floor(value[0] / 50))
               }
               width="200px"
-              colorPalette="pink"
+              colorPalette="gray"
               thumbSize={{ width: 16, height: 16 }}
               thumbAlignment="contain"
               defaultValue={[100]}
@@ -164,7 +164,7 @@ export default function NewTimeslot() {
                 setFlexibility(Math.floor(value[0] / 50))
               }
               width="200px"
-              colorPalette="pink"
+              colorPalette="gray"
               thumbSize={{ width: 16, height: 16 }}
               thumbAlignment="contain"
               defaultValue={[0]}

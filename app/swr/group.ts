@@ -1,5 +1,6 @@
 import useSWR, { type SWRConfiguration } from "swr";
-import { type Group } from "../dashboard/group/group-context";
+import { type Group as GroupType } from "../dashboard/new-group/group-context";
+import { type Profile } from "./profile";
 
 const defaultOptions: SWRConfiguration = {
   onErrorRetry: (error, key, _config, _revalidate, { retryCount }) => {
@@ -35,10 +36,39 @@ function fetchCheck(
     ? [`${process.env.NEXT_PUBLIC_API_URL!}${subpath}`, accessToken]
     : null;
 }
+export type Group = Omit<GroupType, "creatorId"> & {
+  adminId: string;
+  id: string;
+};
+export function useSelfGroups(accessToken: string | undefined, status: string) {
+  const { data, error, mutate, isLoading } = useSWR<Group[]>(
+    fetchCheck(
+      !!accessToken && !!status,
+      accessToken,
+      `/group/me?status=${status}`
+    ),
+    ([url, accessToken]: [url: string, accessToken: string]) =>
+      fetcher(url, accessToken),
+    defaultOptions
+  );
 
-export function useGroups(accessToken: string | undefined) {
-  const { data, error, mutate, isLoading } = useSWR<Group>(
-    fetchCheck(!!accessToken, accessToken, "/groups/me"),
+  return {
+    data,
+    mutate,
+    error,
+    isLoading,
+  };
+}
+export function useGroupMembers(
+  accessToken: string | undefined,
+  groupId: string
+) {
+  const { data, error, mutate, isLoading } = useSWR<Profile[]>(
+    fetchCheck(
+      !!accessToken && !!groupId,
+      accessToken,
+      `/group-member/${groupId}`
+    ),
     ([url, accessToken]: [url: string, accessToken: string]) =>
       fetcher(url, accessToken),
     defaultOptions

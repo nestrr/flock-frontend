@@ -112,7 +112,7 @@ function Welcome({ user }: { user: Profile }) {
         <PopoverContent
           portalled={false}
           width="100%"
-          bg="secondary"
+          bg="bg.panel"
           aria-label="User Info"
         >
           <PopoverBody>

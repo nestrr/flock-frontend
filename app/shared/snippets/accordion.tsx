@@ -12,13 +12,20 @@ export const AccordionItemTrigger = React.forwardRef<
 >(function AccordionItemTrigger(props, ref) {
   const { children, indicatorPlacement = "end", ...rest } = props;
   return (
-    <Accordion.ItemTrigger {...rest} ref={ref}>
+    <Accordion.ItemTrigger {...rest} ref={ref} gap={0}>
       {indicatorPlacement === "start" && (
         <Accordion.ItemIndicator rotate={{ base: "-90deg", _open: "0deg" }}>
           <LuChevronDown color="fg" />
         </Accordion.ItemIndicator>
       )}
-      <HStack gap="4" flex="1" textAlign="start" width="full">
+      <HStack
+        gap="4"
+        textOverflow="ellipsis"
+        textAlign="start"
+        justifyContent={"stretch"}
+        flex={1}
+        overflowX="hidden"
+      >
         {children}
       </HStack>
       {indicatorPlacement === "end" && (

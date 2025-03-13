@@ -130,7 +130,7 @@ export function GeneralDetails() {
         >
           <FileUploadTrigger asChild>
             <Button variant="surface" colorPalette="accent">
-              <LuImage /> Upload a new group image
+              <LuImage /> Upload a new group picture
             </Button>
           </FileUploadTrigger>
           <FileUploadList />

@@ -6,20 +6,36 @@ import React, {
   useReducer,
   type Dispatch,
 } from "react";
-import { type Simplify } from "type-fest";
+import {
+  DESCRIPTION_TOO_SHORT,
+  MIN_DESCRIPTION_LENGTH,
+  MIN_NAME_LENGTH,
+  NAME_TOO_SHORT,
+  type GROUP_ERRORS,
+} from "./constants/errors";
+import { type StringKeyOf, type Simplify } from "type-fest";
 
 export type Group = {
   members: Record<Profile["id"], Omit<Profile, "id">>;
   creatorId: string;
   name: string;
   description: string;
-  picture?: string;
+  image?: string;
+  errors: Set<GroupError>;
 };
 
-type GeneralDetails = Simplify<Pick<Group, "name" | "description" | "picture">>;
-
+type GeneralDetails = Simplify<Pick<Group, "name" | "description" | "image">>;
+type GroupError = StringKeyOf<typeof GROUP_ERRORS>;
 type ClearGroupAction = {
   type: "clear";
+};
+type SetErrorAction = {
+  type: "setError";
+  payload: GroupError;
+};
+type ClearErrorAction = {
+  type: "clearError";
+  payload: GroupError;
 };
 type AddMemberAction = {
   type: "addMember";
@@ -38,7 +54,9 @@ type Action =
   | ClearGroupAction
   | AddMemberAction
   | RemoveMemberAction
-  | UpdateGeneralDetailsAction;
+  | UpdateGeneralDetailsAction
+  | SetErrorAction
+  | ClearErrorAction;
 
 const GroupContext = createContext<Group | null>(null);
 const GroupDispatchContext = createContext<Dispatch<Action> | null>(null);
@@ -48,7 +66,8 @@ function createDefaultGroup(userId: string): Group {
     creatorId: userId,
     name: "",
     description: "",
-    picture: "",
+    image: "",
+    errors: new Set([]),
   };
 }
 
@@ -74,11 +93,6 @@ export function GroupProvider({
 
 export function useGroup() {
   return use(GroupContext) as Group;
-}
-
-export function useGroupState() {
-  const { name } = useGroup();
-  return { valid: name.trim().length > 0 };
 }
 
 export function useGroupDispatch() {
@@ -109,7 +123,40 @@ function groupReducer(group: Group, action: Action) {
       return { ...group, members };
     }
     case "updateDetails": {
-      return { ...group, ...action.payload };
+      let finalGroup = { ...group, ...action.payload };
+      const { errors } = group;
+      if (
+        errors.has(DESCRIPTION_TOO_SHORT) &&
+        (action.payload.description?.length ?? 0) >= MIN_DESCRIPTION_LENGTH
+      ) {
+        errors.delete(DESCRIPTION_TOO_SHORT);
+        finalGroup = {
+          ...finalGroup,
+          errors,
+        };
+      }
+      if (
+        errors.has(NAME_TOO_SHORT) &&
+        (action.payload.name?.length ?? 0) >= MIN_NAME_LENGTH
+      ) {
+        errors.delete(NAME_TOO_SHORT);
+        finalGroup = {
+          ...finalGroup,
+          errors,
+        };
+      }
+      return finalGroup;
+    }
+    case "setError": {
+      group.errors.add(action.payload);
+      return { ...group, errors: group.errors };
+    }
+    case "clearError": {
+      group.errors.delete(action.payload);
+      return {
+        ...group,
+        errors: group.errors,
+      };
     }
     default: {
       console.log("Action not supported by groupReducer: %o", action);

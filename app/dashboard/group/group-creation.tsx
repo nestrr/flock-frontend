@@ -9,7 +9,7 @@ import {
   Textarea,
   Alert,
 } from "@chakra-ui/react";
-import { useGroup, useGroupDispatch, useGroupState } from "./group-context";
+import { useGroup, useGroupDispatch } from "./group-context";
 import ProfileHeader from "../profile/shared/profile-header";
 import { LuImage, LuSparkle, LuX } from "react-icons/lu";
 import debounce from "debounce";
@@ -27,6 +27,13 @@ import { saveGroup } from "@/app/actions/group";
 import { useSession } from "next-auth/react";
 import { useGroups } from "@/app/swr/group";
 import { Skeleton } from "@/app/shared/snippets/skeleton";
+import {
+  DESCRIPTION_TOO_SHORT,
+  GROUP_ERRORS,
+  MIN_DESCRIPTION_LENGTH,
+  MIN_NAME_LENGTH,
+  NAME_TOO_SHORT,
+} from "./constants/errors";
 
 export function GroupMembers() {
   const { members } = useGroup();
@@ -70,7 +77,7 @@ export function GroupMembers() {
   );
 }
 export function GeneralDetails() {
-  const { name, description } = useGroup();
+  const { name, description, errors } = useGroup();
   const dispatch = useGroupDispatch();
   const debouncedNameUpdate = debounce((dispatch, newName) => {
     dispatch({
@@ -142,8 +149,17 @@ export function GeneralDetails() {
             icon={<LuSparkle />}
           />
         }
+        alert={errors.has(NAME_TOO_SHORT) ? GROUP_ERRORS[NAME_TOO_SHORT] : ""}
+        min={100}
       />
-      <InputItem label="description">
+      <InputItem
+        label="description"
+        alert={
+          errors.has(DESCRIPTION_TOO_SHORT)
+            ? GROUP_ERRORS[DESCRIPTION_TOO_SHORT]
+            : ""
+        }
+      >
         <Textarea
           placeholder="What's the group about?"
           aria-label="What's the group about?"
@@ -162,13 +178,22 @@ export function GeneralDetails() {
 }
 function GroupActions() {
   const dispatch = useGroupDispatch();
-  const { valid } = useGroupState();
   const group = useGroup();
   const { data: session, status } = useSession();
   const { mutate } = useGroups(session?.accessToken);
   async function save() {
+    if (group.description.length < MIN_DESCRIPTION_LENGTH) {
+      dispatch({ type: "setError", payload: "DESCRIPTION_TOO_SHORT" });
+    } else if (group.name.length < MIN_NAME_LENGTH)
+      dispatch({ type: "setError", payload: "NAME_TOO_SHORT" });
+    else {
+      await finalize();
+    }
+  }
+  async function finalize() {
     const loadingToast = toaster.loading({
       title: "Sending invites...",
+      description: "This usually takes us a while.",
     });
     const response = await saveGroup(group);
     toaster.dismiss(loadingToast);
@@ -184,13 +209,7 @@ function GroupActions() {
     return <Skeleton w="full" height="3em" bg="accent.muted/50" />;
   return (
     <HStack w="full" gap={10}>
-      <Button
-        variant="surface"
-        disabled={!valid}
-        flex={1}
-        colorPalette={"accent"}
-        onClick={save}
-      >
+      <Button variant="surface" flex={1} colorPalette={"accent"} onClick={save}>
         Send Invites
       </Button>
       <Button

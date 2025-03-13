@@ -94,7 +94,10 @@ function Welcome({ user }: { user: Profile }) {
             <Avatar
               name={name!}
               src={image!}
-              bg="primary.contrast"
+              bgGradient="to-tr"
+              gradientFrom={{ _dark: "green.600", _light: "green.400" }}
+              gradientTo={{ _dark: "yellow.600", _light: "yellow.400" }}
+              gradientVia={{ _dark: "pink.600", _light: "pink.300" }}
               css={ringCss}
             />
             <Text

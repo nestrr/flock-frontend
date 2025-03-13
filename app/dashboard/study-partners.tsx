@@ -10,7 +10,7 @@ import {
   useDrawer,
   DrawerRootProvider,
 } from "@chakra-ui/react";
-import { LuFolder, LuSquareCheck, LuUser } from "react-icons/lu";
+import { LuSquareCheck, LuUser } from "react-icons/lu";
 import { useProfiles } from "../swr/profile";
 import { useSession } from "next-auth/react";
 import ProfileWrapper from "./profile/profile-wrapper";
@@ -18,6 +18,7 @@ import FailedLoad from "../shared/failed-load";
 import { GroupProvider } from "./group/group-context";
 import GroupBar from "./group/group-bar";
 import GroupCreation from "./group/group-creation";
+import { FaPeoplePulling } from "react-icons/fa6";
 
 function AllProfiles() {
   const { data: session, status: sessionStatus } = useSession();
@@ -83,8 +84,8 @@ export default function StudyPartners() {
               Search
             </Tabs.Trigger>
             <Tabs.Trigger value="projects">
-              <LuFolder />
-              Projects
+              <FaPeoplePulling />
+              Groups
             </Tabs.Trigger>
             <Tabs.Trigger value="tasks">
               <LuSquareCheck />

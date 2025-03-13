@@ -23,7 +23,7 @@ function FooterLink({
     >
       <ChakraLink
         asChild
-        fontWeight="bold"
+        fontWeight="medium"
         letterSpacing={"wide"}
         color="primary.fg"
         textAlign={{ mdDown: "center" }}

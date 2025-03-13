@@ -38,7 +38,7 @@ function fetchCheck(
 
 export function useGroups(accessToken: string | undefined) {
   const { data, error, mutate, isLoading } = useSWR<Group>(
-    fetchCheck(!!accessToken, accessToken, "/groups"),
+    fetchCheck(!!accessToken, accessToken, "/groups/me"),
     ([url, accessToken]: [url: string, accessToken: string]) =>
       fetcher(url, accessToken),
     defaultOptions

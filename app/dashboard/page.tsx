@@ -17,7 +17,7 @@ function WelcomeAlert({ token }: { token: string | undefined }) {
   return open ? (
     <Alert.Root status="success" alignItems={"center"}>
       <Alert.Indicator>
-        <LuSmile fontWeight={"bold"} fontSize={"lg"} />
+        <LuSmile fontWeight={"medium"} fontSize={"lg"} />
       </Alert.Indicator>
       <Alert.Content justifyContent={"center"}>
         <Alert.Title fontSize={"sm"}>Welcome back! 👋🐦</Alert.Title>
@@ -25,7 +25,7 @@ function WelcomeAlert({ token }: { token: string | undefined }) {
           <Alert.Description>
             <ChakraLink
               asChild
-              fontWeight="bold"
+              fontWeight="medium"
               letterSpacing={"wide"}
               color="primary.fg"
               textAlign={{ mdDown: "center" }}

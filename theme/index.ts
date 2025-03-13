@@ -328,6 +328,14 @@ const colorSemanticTokens = defineSemanticTokens({
     },
   },
 });
+const fontWeightTokens = defineTokens({
+  fontWeights: {
+    ...defaultConfig.theme?.tokens?.fontWeights,
+    ...{
+      normal: { value: "200" },
+    },
+  },
+});
 
 const theme = defineConfig({
   theme: {
@@ -337,9 +345,10 @@ const theme = defineConfig({
           value: "Montserrat Alternates, sans-serif",
         },
         body: {
-          value: "Questrial, sans-serif",
+          value: "Geologica, sans-serif",
         },
       },
+      ...fontWeightTokens,
       ...colorTokens,
     },
     semanticTokens: { ...colorSemanticTokens },
@@ -353,3 +362,5 @@ export const ringCss = defineStyle({
   outlineOffset: "2px",
   outlineStyle: "solid",
 });
+
+console.log(system);

@@ -1,7 +1,7 @@
 import { Provider as ColorModeProvider } from "@/app/shared/snippets/provider";
 import Header from "@/app/shared/header";
 import type { Metadata } from "next";
-import { Montserrat_Alternates, Questrial } from "next/font/google";
+import { Geologica, Montserrat_Alternates } from "next/font/google";
 import Footer from "@/app/shared/footer";
 import { Toaster } from "./shared/snippets/toaster";
 import { SessionProvider } from "next-auth/react";
@@ -13,10 +13,10 @@ const montserrat = Montserrat_Alternates({
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
 });
 
-const questrial = Questrial({
-  variable: "--font-questrial",
+const questrial = Geologica({
+  variable: "--font-mona-sans",
   subsets: ["latin"],
-  weight: ["400"],
+  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
 });
 export const metadata: Metadata = {
   title: "Create Next App",

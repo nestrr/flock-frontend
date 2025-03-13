@@ -8,7 +8,7 @@ export default function Bio({
 }) {
   function renderBio() {
     return truncate ? (
-      <Text lineClamp={6} lineHeight={"tall"} fontSize="large">
+      <Text lineClamp={6} lineHeight={"tall"}>
         {bio}
       </Text>
     ) : (
@@ -22,7 +22,7 @@ export default function Bio({
   ) : (
     <HStack gap={1}>
       {!bio && <Text>😶‍🌫️</Text>}
-      <Text lineHeight={"tall"} fontSize="large" fontStyle="italic">
+      <Text lineHeight={"tall"} fontStyle="italic">
         This user has not added a bio.
       </Text>
     </HStack>

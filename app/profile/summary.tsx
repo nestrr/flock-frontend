@@ -54,7 +54,6 @@ export function Program({
     );
 
   const program = programs?.find((p) => p.code === mergedProgram);
-  console.log(programs, mergedProgram);
   return program ? (
     <Text textStyle="sm">{`${mergedDegreeType} | ${program?.name}`}</Text>
   ) : (

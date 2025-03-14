@@ -2,12 +2,18 @@
 import AnimatedDialog from "../shared/animated-dialog";
 import { Text } from "@chakra-ui/react";
 import { useEffect } from "react";
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
+import { useSelfProfile } from "../swr/profile";
 
 export default function SignOut() {
+  const { data: session } = useSession();
+  const { mutate } = useSelfProfile(session?.accessToken);
   useEffect(() => {
-    signOut({ redirect: true, redirectTo: "/" });
-  }, []);
+    if (mutate) {
+      mutate(undefined);
+      signOut({ redirect: true, redirectTo: "/" });
+    }
+  }, [mutate]);
   return (
     <AnimatedDialog
       animationName="birdloader"

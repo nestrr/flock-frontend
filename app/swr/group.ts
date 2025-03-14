@@ -51,7 +51,6 @@ export function useSelfGroups(accessToken: string | undefined, status: string) {
       fetcher(url, accessToken),
     defaultOptions
   );
-
   return {
     data,
     mutate,
@@ -68,6 +67,34 @@ export function useGroupMembers(
       !!accessToken && !!groupId,
       accessToken,
       `/group-member/${groupId}`
+    ),
+    ([url, accessToken]: [url: string, accessToken: string]) =>
+      fetcher(url, accessToken),
+    defaultOptions
+  );
+
+  return {
+    data,
+    mutate,
+    error,
+    isLoading,
+  };
+}
+
+export type Invite = {
+  personId: string;
+  groupId: string;
+  email: string;
+  name: string;
+  image: string;
+  status: string;
+};
+export function useInvites(accessToken: string | undefined, groupId: string) {
+  const { data, error, mutate, isLoading } = useSWR<Invite[]>(
+    fetchCheck(
+      !!accessToken && !!groupId,
+      accessToken,
+      `/group-invite/${groupId}`
     ),
     ([url, accessToken]: [url: string, accessToken: string]) =>
       fetcher(url, accessToken),

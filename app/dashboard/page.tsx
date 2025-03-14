@@ -21,7 +21,7 @@ function WelcomeAlert({ token }: { token: string | undefined }) {
       </Alert.Indicator>
       <Alert.Content justifyContent={"center"}>
         <Alert.Title fontSize={"sm"}>Welcome back! 👋🐦</Alert.Title>
-        {profile!.newAccount && (
+        {profile?.newAccount && (
           <Alert.Description>
             <ChakraLink
               asChild

@@ -6,7 +6,6 @@ import { Table, Container } from "@chakra-ui/react";
 
 export default function TimeslotRow({ timeslot }: { timeslot: Timeslot }) {
   const { from, to, reliability, flexibility } = normalizeTimeslot(timeslot);
-  console.log(timeslot);
   return (
     <Table.Row borderColor="accent.muted">
       <Table.Cell borderColor="accent.muted">{from}</Table.Cell>

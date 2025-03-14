@@ -3,6 +3,7 @@ import {
   Card,
   Heading,
   HStack,
+  IconButton,
   SegmentGroup,
   SegmentGroupRootProvider,
   Spinner,
@@ -17,10 +18,16 @@ import Group from "./all-groups/group";
 import { useMemo } from "react";
 import { GROUP_STATUSES } from "./all-groups/constants";
 import { AccordionRoot } from "../shared/snippets/accordion";
+import { ToggleTip } from "../shared/snippets/toggle-tip";
+import { LuMessageCircleQuestion } from "react-icons/lu";
 
 function GroupStatuses() {
   const groupOptions = useMemo(
-    () => Object.values(GROUP_STATUSES).map((v) => ({ label: v, value: v })),
+    () =>
+      Object.values(GROUP_STATUSES).map((v) => ({
+        label: v,
+        value: v,
+      })),
     []
   );
   return useMemo(
@@ -48,6 +55,19 @@ function GroupStatuses() {
             <SegmentGroup.ItemHiddenInput />
           </SegmentGroup.Item>
         ))}
+        <ToggleTip
+          size="lg"
+          content="Until at least one member accepts their invite, a group stays in pending status."
+        >
+          <IconButton
+            size="xs"
+            variant="subtle"
+            rounded="full"
+            colorPalette={"accent"}
+          >
+            <LuMessageCircleQuestion />
+          </IconButton>
+        </ToggleTip>
       </HStack>
     ),
     [groupOptions]
@@ -87,6 +107,7 @@ function GroupsList() {
       px={5}
       py={0}
       w="full"
+      h="full"
       mdDown={{ scrollbarWidth: "auto" }}
       overflowY="auto"
       scrollbarWidth={"thin"}
@@ -116,7 +137,7 @@ function GroupsList() {
           display={"flex"}
         >
           <Card.Header>
-            <Heading size="md">nothing here! 👻</Heading>
+            <Heading size="2xl">nothing here! 👻</Heading>
           </Card.Header>
           <Card.Body flex={0}>No matching groups.</Card.Body>
         </Card.Root>

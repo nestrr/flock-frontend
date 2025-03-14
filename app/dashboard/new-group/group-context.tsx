@@ -80,7 +80,6 @@ export function GroupProvider({
 }) {
   const initialGroup = createDefaultGroup(userId);
   const [group, dispatch] = useReducer(groupReducer, initialGroup);
-  console.log("reloaded %o", group);
   const memoizedGroup = useMemo(() => group, [group]);
   return (
     <GroupContext.Provider value={memoizedGroup}>

@@ -11,7 +11,7 @@ import { useSession } from "next-auth/react";
 import Member from "./member";
 import FailedLoad from "@/app/shared/failed-load";
 import Invitee from "./invitee";
-export function ActiveMembers({ group }: { group: Group }) {
+function ActiveMembers({ group }: { group: Group }) {
   const { data: session, status } = useSession();
   const {
     data: members,
@@ -66,7 +66,7 @@ export function ActiveMembers({ group }: { group: Group }) {
     </VStack>
   );
 }
-export function AllInvited({ group }: { group: Group }) {
+function AllInvited({ group }: { group: Group }) {
   const { data: session, status } = useSession();
   const {
     data: invites,

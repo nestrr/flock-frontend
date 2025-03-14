@@ -34,7 +34,7 @@ import {
   MIN_NAME_LENGTH,
   NAME_TOO_SHORT,
 } from "./constants/errors";
-import { GROUP_STATUSES } from "../all-groups/constants";
+import { GROUP_STATUSES } from "../groups/constants";
 
 export function GroupMembers() {
   const { members } = useGroup();

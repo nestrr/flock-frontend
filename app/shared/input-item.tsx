@@ -52,7 +52,7 @@ export default function InputItem(inputProps: InputPropsType) {
         <InputAddon bg={colorPalette} border={0}>
           <Text
             fontSize={"md"}
-            fontWeight={"bold"}
+            fontWeight={"medium"}
             letterSpacing={"wide"}
             lineHeight={"normal"}
           >

@@ -21,16 +21,17 @@ export default function Badges({
         shadow={"xs"}
         colorPalette={primaryCampus ? "yellow" : "gray"}
         letterSpacing={"wide"}
-        fontWeight="bold"
+        fontWeight="medium"
         variant={"solid"}
       >
         {primaryCampus ?? "main campus unknown"}
       </Badge>
       <Badge
         textTransform={"lowercase"}
+        shadow={"xs"}
         colorPalette={standing ? "yellow" : "gray"}
         letterSpacing={"wide"}
-        fontWeight="bold"
+        fontWeight="medium"
         variant={"solid"}
       >
         {standing ?? "year unknown"}

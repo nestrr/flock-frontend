@@ -167,7 +167,7 @@ export default function Preferences({
   function render() {
     if (fetchError) {
       return (
-        <Text fontWeight={"bold"} letterSpacing={"wide"} color="red/80">
+        <Text fontWeight={"medium"} letterSpacing={"wide"} color="red/80">
           Failed to load 😔
         </Text>
       );

@@ -54,7 +54,6 @@ export function Program({
     );
 
   const program = programs?.find((p) => p.code === mergedProgram);
-  console.log(programs, mergedProgram);
   return program ? (
     <Text textStyle="sm">{`${mergedDegreeType} | ${program?.name}`}</Text>
   ) : (
@@ -95,7 +94,7 @@ export function Badges({
         shadow={"xs"}
         colorPalette={campus?.name ? "blue" : "gray"}
         letterSpacing={"wide"}
-        fontWeight="bold"
+        fontWeight="medium"
         variant={"solid"}
       >
         {campus?.name ?? "main campus unknown"}
@@ -115,7 +114,7 @@ export function Badges({
         textTransform={"lowercase"}
         colorPalette={standing?.name ? "blue" : "gray"}
         letterSpacing={"wide"}
-        fontWeight="bold"
+        fontWeight="medium"
         variant={"solid"}
       >
         {standing?.name ?? "year unknown"}

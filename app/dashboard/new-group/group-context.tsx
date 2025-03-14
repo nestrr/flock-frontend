@@ -20,7 +20,7 @@ export type Group = {
   creatorId: string;
   name: string;
   description: string;
-  image?: string;
+  image?: string | null;
   errors: Set<GroupError>;
 };
 
@@ -66,7 +66,7 @@ function createDefaultGroup(userId: string): Group {
     creatorId: userId,
     name: "",
     description: "",
-    image: "",
+    image: null,
     errors: new Set([]),
   };
 }
@@ -80,7 +80,6 @@ export function GroupProvider({
 }) {
   const initialGroup = createDefaultGroup(userId);
   const [group, dispatch] = useReducer(groupReducer, initialGroup);
-  console.log("reloaded %o", group);
   const memoizedGroup = useMemo(() => group, [group]);
   return (
     <GroupContext.Provider value={memoizedGroup}>

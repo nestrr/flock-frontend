@@ -100,20 +100,19 @@ function Welcome({ user }: { user: Profile }) {
               gradientVia={{ _dark: "pink.600", _light: "pink.300" }}
               css={ringCss}
             />
-            <Text
-              fontWeight="bold"
-              fontSize="lg"
+            <Heading
+              size="xl"
               fontFamily={"heading"}
               display={{ base: "none", md: "block" }}
             >
               {firstName}
-            </Text>
+            </Heading>
           </HStack>{" "}
         </PopoverTrigger>
         <PopoverContent
           portalled={false}
           width="100%"
-          bg="secondary"
+          bg="bg.panel"
           aria-label="User Info"
         >
           <PopoverBody>
@@ -146,7 +145,7 @@ function Welcome({ user }: { user: Profile }) {
                   colorPalette={"gray.700"}
                   size={"sm"}
                   variant={"surface"}
-                  fontWeight={"bold"}
+                  fontWeight={"medium"}
                   letterSpacing={"wide"}
                   textTransform={"lowercase"}
                 >
@@ -164,7 +163,7 @@ function Welcome({ user }: { user: Profile }) {
                   colorPalette={"gray"}
                   size={"sm"}
                   variant={"surface"}
-                  fontWeight={"bold"}
+                  fontWeight={"medium"}
                   letterSpacing={"wide"}
                   textTransform={"lowercase"}
                 >
@@ -185,7 +184,7 @@ function Welcome({ user }: { user: Profile }) {
                   colorPalette={"primary.700"}
                   size={"sm"}
                   variant={"surface"}
-                  fontWeight={"bold"}
+                  fontWeight={"medium"}
                   letterSpacing={"wide"}
                   textTransform={"lowercase"}
                 >
@@ -197,6 +196,7 @@ function Welcome({ user }: { user: Profile }) {
                   variant={"subtle"}
                   colorPalette={"accent"}
                   size="xs"
+                  h={"3em"}
                   p={0}
                   onClick={() => popover.setOpen(false)}
                 >
@@ -220,6 +220,7 @@ function Welcome({ user }: { user: Profile }) {
                     _hover={{ bg: "red.700" }}
                     colorPalette={"red"}
                     size="xs"
+                    h={"3em"}
                   >
                     <LinkOverlay asChild>
                       <Link href="/signout">Log Out </Link>

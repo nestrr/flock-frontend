@@ -79,7 +79,7 @@ export default function TimeslotRow({
             step={50}
             orientation={"vertical"}
             height="100px"
-            colorPalette="pink"
+            colorPalette="gray"
             thumbSize={{ width: 16, height: 16 }}
             thumbAlignment="contain"
             defaultValue={[reliability * 50]}
@@ -94,7 +94,7 @@ export default function TimeslotRow({
             size={"md"}
             step={50}
             width="150px"
-            colorPalette="pink"
+            colorPalette="gray"
             thumbSize={{ width: 16, height: 16 }}
             thumbAlignment="contain"
             defaultValue={[reliability * 50]}
@@ -114,7 +114,7 @@ export default function TimeslotRow({
             step={50}
             orientation="vertical"
             height="100px"
-            colorPalette="pink"
+            colorPalette="gray"
             thumbSize={{ width: 16, height: 16 }}
             thumbAlignment="contain"
             defaultValue={[flexibility * 50]}
@@ -129,7 +129,7 @@ export default function TimeslotRow({
             size={"md"}
             step={50}
             width="150px"
-            colorPalette="pink"
+            colorPalette="gray"
             thumbSize={{ width: 16, height: 16 }}
             thumbAlignment="contain"
             defaultValue={[flexibility * 50]}

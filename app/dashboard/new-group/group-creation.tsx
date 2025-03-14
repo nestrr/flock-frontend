@@ -25,7 +25,7 @@ import InputItem from "@/app/shared/input-item";
 import InputIcon from "@/app/profile/shared/input-icon";
 import { saveGroup } from "@/app/actions/group";
 import { useSession } from "next-auth/react";
-import { useGroups } from "@/app/swr/group";
+import { useSelfGroups } from "@/app/swr/group";
 import { Skeleton } from "@/app/shared/snippets/skeleton";
 import {
   DESCRIPTION_TOO_SHORT,
@@ -34,6 +34,7 @@ import {
   MIN_NAME_LENGTH,
   NAME_TOO_SHORT,
 } from "./constants/errors";
+import { GROUP_STATUSES } from "../groups/constants";
 
 export function GroupMembers() {
   const { members } = useGroup();
@@ -180,7 +181,10 @@ function GroupActions() {
   const dispatch = useGroupDispatch();
   const group = useGroup();
   const { data: session, status } = useSession();
-  const { mutate } = useGroups(session?.accessToken);
+  const { mutate } = useSelfGroups(
+    session?.accessToken,
+    GROUP_STATUSES.PENDING
+  );
   async function save() {
     if (group.description.length < MIN_DESCRIPTION_LENGTH) {
       dispatch({ type: "setError", payload: "DESCRIPTION_TOO_SHORT" });
@@ -244,7 +248,7 @@ export default function GroupCreation() {
               </Drawer.CloseTrigger>
             </HStack>
             <Alert.Root status="success" justifyContent={"center"}>
-              <Alert.Title textAlign={"center"} color="accent.fg">
+              <Alert.Title textAlign={"center"}>
                 💡 Once you click &apos;Send Invites&apos;, all your
                 group&apos;s members will get an invite through email. They can
                 accept or reject the invite within 48 hours.

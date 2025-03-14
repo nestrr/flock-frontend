@@ -41,7 +41,7 @@ function Standings({
 
   if (error) {
     return (
-      <Text fontWeight={"bold"} letterSpacing={"wide"} color="red/80">
+      <Text fontWeight={"medium"} letterSpacing={"wide"} color="red/80">
         Failed to load 😔
       </Text>
     );
@@ -108,7 +108,7 @@ function DegreeTypes({
 
   if (error) {
     return (
-      <Text fontWeight={"bold"} letterSpacing={"wide"} color="red/80">
+      <Text fontWeight={"medium"} letterSpacing={"wide"} color="red/80">
         Failed to load 😔
       </Text>
     );
@@ -176,7 +176,7 @@ function Programs({
   } = usePrograms(session?.accessToken, degreeType);
   if (error) {
     return (
-      <Text fontWeight={"bold"} letterSpacing={"wide"} color="red/80">
+      <Text fontWeight={"medium"} letterSpacing={"wide"} color="red/80">
         Failed to load 😔
       </Text>
     );
@@ -260,8 +260,8 @@ export default function AcademicDetails({
         >
           <Alert.Title alignSelf="end">
             <span>
-              💡 You&apos;ll need to select a level {<strong>and</strong>} a
-              program to update your degree information.
+              💡 You&apos;ll need to select a level {<u>and</u>} a program to
+              update your degree information.
             </span>
           </Alert.Title>
         </Alert.Root>

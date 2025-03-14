@@ -26,7 +26,7 @@ export default function Error({
       </Heading>
       <ChakraLink
         asChild
-        fontWeight="bold"
+        fontWeight="medium"
         letterSpacing={"wide"}
         color="primary.fg"
         textAlign={{ mdDown: "center" }}

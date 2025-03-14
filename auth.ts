@@ -40,10 +40,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         });
         return {
           ...token,
-          id: account.userId,
-          accessToken: account?.access_token,
-          expiresAt: account?.expires_at,
-          refreshToken: account?.refresh_token,
+          id: account.providerAccountId,
+          accessToken: account.access_token,
+          expiresAt: account.expires_at,
+          refreshToken: account.refresh_token,
         };
       } else if (Date.now() < (token.expiresAt as number) * 1000) {
         return token;
@@ -90,7 +90,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     },
     async session({ session, token }) {
       const accessToken = session?.accessToken ?? token.accessToken;
-      const userId = session?.userId ?? token.sub;
+      const userId = session?.userId ?? token.id;
       return {
         ...session,
         accessToken,

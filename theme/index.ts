@@ -316,7 +316,7 @@ const colorSemanticTokens = defineSemanticTokens({
       panel: {
         value: {
           _light: "{colors.secondaryLight.300}",
-          _dark: "{colors.secondaryDark.700}",
+          _dark: "{colors.secondaryDark.900}",
         },
       },
       solid: {

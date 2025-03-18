@@ -19,13 +19,19 @@ function AdminBadge() {
     </Badge>
   );
 }
-export default function Member({
-  group,
-  profile,
-}: {
-  group: Group;
-  profile: Partial<Profile>;
-}) {
+type MemberProps =
+  | {
+      group: Group;
+      profile: Partial<Profile>;
+      actions?: never;
+      replaceDefaultActions?: never;
+    }
+  | {
+      group: Group;
+      profile: Partial<Profile>;
+      actions: React.ReactNode;
+    };
+export default function Member({ group, profile, actions }: MemberProps) {
   const { image, name } = profile;
   return (
     <HStack
@@ -48,6 +54,7 @@ export default function Member({
         <Text fontSize={{ base: "sm", md: "normal" }}>{name}</Text>
       </HStack>
       {group.adminId === profile.id && <AdminBadge />}
+      {actions ? actions : <></>}
     </HStack>
   );
 }

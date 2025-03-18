@@ -5,8 +5,9 @@ import { Avatar } from "@/app/shared/snippets/avatar";
 import {
   GROUP_INVITE_STATUSES_DISPLAY,
   type GroupInviteStatus,
-} from "./constants";
+} from "../../groups/constants";
 import { Tooltip } from "@/app/shared/snippets/tooltip";
+import React from "react";
 function StatusBadge({ status }: { status: string }) {
   const { label, color } =
     GROUP_INVITE_STATUSES_DISPLAY[status as GroupInviteStatus];
@@ -32,7 +33,15 @@ function StatusBadge({ status }: { status: string }) {
     </Tooltip>
   );
 }
-export default function Invitee({ invite }: { invite: Invite }) {
+export default function Invitee({
+  invite,
+  actions,
+  showInviteStatus = true,
+}: {
+  invite: Invite;
+  actions?: React.ReactNode;
+  showInviteStatus?: boolean;
+}) {
   const { status, image, name } = invite;
   return (
     <HStack
@@ -56,7 +65,8 @@ export default function Invitee({ invite }: { invite: Invite }) {
         />
         <Text fontSize={{ base: "sm", md: "normal" }}>{name}</Text>
       </HStack>
-      <StatusBadge status={status} />
+      {showInviteStatus && <StatusBadge status={status} />}
+      {actions ? actions : <></>}
     </HStack>
   );
 }

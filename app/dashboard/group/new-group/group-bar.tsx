@@ -1,8 +1,8 @@
 import { ActionBar, Button, useDrawerContext } from "@chakra-ui/react";
-import { useGroup } from "./group-context";
+import { type NewGroup, useGroup } from "../shared/group-context";
 
 export default function GroupBar() {
-  const { members } = useGroup();
+  const { members } = useGroup() as NewGroup;
   const { setOpen } = useDrawerContext();
   return Object.keys(members).length > 0 ? (
     <ActionBar.Root open={true} closeOnInteractOutside={false}>

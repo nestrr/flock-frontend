@@ -14,16 +14,22 @@ import {
   type GROUP_ERRORS,
 } from "./constants/errors";
 import { type StringKeyOf, type Simplify } from "type-fest";
-
-export type Group = {
+export type NewGroup = {
   members: Record<Profile["id"], Omit<Profile, "id">>;
-  creatorId: string;
+  adminId: string;
   name: string;
   description: string;
   image?: string | null;
   errors: Set<GroupError>;
 };
-
+export type GroupInEdit = Omit<NewGroup, "members"> & {
+  id: string;
+};
+export type Group = NewGroup | GroupInEdit;
+export type GroupSummary = {
+  active: Group;
+  original: Group;
+};
 type GeneralDetails = Simplify<Pick<Group, "name" | "description" | "image">>;
 type GroupError = StringKeyOf<typeof GROUP_ERRORS>;
 type ClearGroupAction = {
@@ -49,6 +55,10 @@ type UpdateGeneralDetailsAction = {
   type: "updateDetails";
   payload: Simplify<Partial<GeneralDetails>>;
 };
+type AssignAdminAction = {
+  type: "assignAdmin";
+  payload: string;
+};
 
 type Action =
   | ClearGroupAction
@@ -56,30 +66,47 @@ type Action =
   | RemoveMemberAction
   | UpdateGeneralDetailsAction
   | SetErrorAction
-  | ClearErrorAction;
+  | ClearErrorAction
+  | AssignAdminAction;
 
-const GroupContext = createContext<Group | null>(null);
+const GroupContext = createContext<GroupSummary | null>(null);
 const GroupDispatchContext = createContext<Dispatch<Action> | null>(null);
-function createDefaultGroup(userId: string): Group {
-  return {
-    members: {},
-    creatorId: userId,
-    name: "",
-    description: "",
-    image: null,
-    errors: new Set([]),
-  };
+function createDefaultGroup(userId?: string, groupInEdit?: Group): Group {
+  if (!groupInEdit && !userId)
+    throw new Error(
+      "Failed to init group context: must have either group in edit or user ID"
+    );
+  return groupInEdit
+    ? { ...groupInEdit, errors: new Set([]) }
+    : {
+        members: {},
+        adminId: userId!,
+        name: "",
+        description: "",
+        image: null,
+        errors: new Set([]),
+      };
 }
-
+type GroupProviderProps =
+  | {
+      userId: string;
+      children: React.ReactNode;
+      group?: never;
+    }
+  | {
+      userId?: never;
+      children: React.ReactNode;
+      group: Group;
+    };
 export function GroupProvider({
   userId,
   children,
-}: {
-  userId: string;
-  children: React.ReactNode;
-}) {
-  const initialGroup = createDefaultGroup(userId);
-  const [group, dispatch] = useReducer(groupReducer, initialGroup);
+  group: groupInEdit,
+}: GroupProviderProps) {
+  const [group, dispatch] = useReducer(groupReducer, {
+    active: createDefaultGroup(userId, groupInEdit),
+    original: createDefaultGroup(userId, groupInEdit),
+  });
   const memoizedGroup = useMemo(() => group, [group]);
   return (
     <GroupContext.Provider value={memoizedGroup}>
@@ -91,7 +118,10 @@ export function GroupProvider({
 }
 
 export function useGroup() {
-  return use(GroupContext) as Group;
+  return use(GroupContext)?.active as Group;
+}
+export function useGroupSummary() {
+  return use(GroupContext);
 }
 
 export function useGroupDispatch() {
@@ -99,31 +129,32 @@ export function useGroupDispatch() {
   return useMemo(() => dispatch, [dispatch]) as Dispatch<Action>;
 }
 
-function groupReducer(group: Group, action: Action) {
+function groupReducer(groupSummary: GroupSummary, action: Action) {
+  const { active, original } = groupSummary;
+  console.log(groupSummary);
   switch (action.type) {
     case "clear": {
-      const { creatorId } = group;
-      return createDefaultGroup(creatorId);
+      return { active: original, original };
     }
     case "addMember": {
-      let { members } = group;
+      let { members } = active as NewGroup;
       const { id, ...rest } = action.payload;
       const newMember = {
         [id]: rest,
       };
       members = { ...members, ...newMember };
-      return { ...group, members };
+      return { active: { ...active, members }, original };
     }
     case "removeMember": {
-      let { members } = group;
+      let { members } = active as NewGroup;
       const id = action.payload;
       const { [id]: _, ...rest } = members;
       members = { ...rest };
-      return { ...group, members };
+      return { active: { ...active, members }, original };
     }
     case "updateDetails": {
-      let finalGroup = { ...group, ...action.payload };
-      const { errors } = group;
+      let finalGroup = { ...active, ...action.payload };
+      const { errors } = active;
       if (
         errors.has(DESCRIPTION_TOO_SHORT) &&
         (action.payload.description?.length ?? 0) >= MIN_DESCRIPTION_LENGTH
@@ -144,22 +175,32 @@ function groupReducer(group: Group, action: Action) {
           errors,
         };
       }
-      return finalGroup;
+      return { active: finalGroup, original };
     }
     case "setError": {
-      group.errors.add(action.payload);
-      return { ...group, errors: group.errors };
+      active.errors.add(action.payload);
+      console.log("GROUP SUMMARY AT setError", groupSummary);
+      return {
+        ...groupSummary,
+        active: { ...active, errors: active.errors },
+      };
     }
     case "clearError": {
-      group.errors.delete(action.payload);
+      active.errors.delete(action.payload);
       return {
-        ...group,
-        errors: group.errors,
+        active: {
+          ...active,
+          errors: active.errors,
+        },
+        original,
       };
+    }
+    case "assignAdmin": {
+      return { active: { ...active, adminId: action.payload }, original };
     }
     default: {
       console.log("Action not supported by groupReducer: %o", action);
-      return group;
+      return groupSummary;
     }
   }
 }

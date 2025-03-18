@@ -1,13 +1,17 @@
 "use client";
 import {
   Button,
+  DrawerRootProvider,
   HStack,
   Switch,
   SwitchRootProvider,
   Table,
   Text,
+  useDrawer,
   useSwitch,
   VStack,
+  useDialog,
+  DialogRootProvider,
 } from "@chakra-ui/react";
 import { type Group as GroupType } from "@/app/swr/group";
 import { Avatar } from "@/app/shared/snippets/avatar";
@@ -19,11 +23,16 @@ import {
 import Members from "./group-members";
 import { useSession } from "next-auth/react";
 import { Tooltip } from "@/app/shared/snippets/tooltip";
+import EditGroup from "../group/edit-group/group-edit";
+import { GroupProvider } from "../group/shared/group-context";
+import DeleteGroup from "../group/delete-group/group-deletion";
 
 export default function Group({ group }: { group: GroupType }) {
   const { image, name } = group;
   const { data: session } = useSession();
   const activeMemberSwitch = useSwitch();
+  const editDrawer = useDrawer();
+  const confirmDeleteDialog = useDialog();
   return (
     <AccordionItem value={group.id} border={0}>
       <AccordionItemTrigger
@@ -126,14 +135,34 @@ export default function Group({ group }: { group: GroupType }) {
                   justifyContent={{ base: "center", md: "start" }}
                 >
                   {session?.user.id === group.adminId && (
-                    <>
-                      <Button colorPalette={"accent"} variant="surface">
-                        Edit
-                      </Button>
-                      <Button colorPalette="red" variant="subtle">
-                        Delete
-                      </Button>
-                    </>
+                    <HStack>
+                      <GroupProvider group={group}>
+                        <DrawerRootProvider value={editDrawer}>
+                          <Button
+                            colorPalette={"accent"}
+                            variant="surface"
+                            onClick={() => editDrawer.setOpen(true)}
+                          >
+                            Edit
+                          </Button>
+                          <EditGroup />
+                        </DrawerRootProvider>
+                        <DialogRootProvider
+                          placement={"center"}
+                          size={{ base: "xl", md: "lg" }}
+                          value={confirmDeleteDialog}
+                        >
+                          <Button
+                            colorPalette="red"
+                            variant="surface"
+                            onClick={() => confirmDeleteDialog.setOpen(true)}
+                          >
+                            Delete
+                          </Button>
+                          <DeleteGroup />
+                        </DialogRootProvider>
+                      </GroupProvider>
+                    </HStack>
                   )}
                   {session?.user.id === group.adminId ? (
                     <Tooltip
@@ -146,12 +175,12 @@ export default function Group({ group }: { group: GroupType }) {
                           : ""
                       }
                     >
-                      <Button colorPalette="red" disabled variant="subtle">
+                      <Button colorPalette="red" disabled variant="surface">
                         Leave
                       </Button>
                     </Tooltip>
                   ) : (
-                    <Button colorPalette="red" disabled variant="subtle">
+                    <Button colorPalette="red" disabled variant="surface">
                       Leave
                     </Button>
                   )}

@@ -8,9 +8,9 @@ import {
   Heading,
 } from "@chakra-ui/react";
 import { useSession } from "next-auth/react";
-import Member from "./member";
+import Member from "../group/shared/member";
 import FailedLoad from "@/app/shared/failed-load";
-import Invitee from "./invitee";
+import Invitee from "../group/shared/invitee";
 function ActiveMembers({ group }: { group: Group }) {
   const { data: session, status } = useSession();
   const {
@@ -111,11 +111,10 @@ function AllInvited({ group }: { group: Group }) {
           <Invitee key={invite.personId} invite={invite} />
         ))
       ) : (
-        <>
-          {" "}
-          <Heading size="2xl">nothing here! 👻</Heading>
+        <VStack alignItems={"center"} gap={0} py={1} w="full">
+          <Heading size="lg">nothing here! 👻</Heading>
           <Text fontStyle="italic"> none found </Text>
-        </>
+        </VStack>
       )}
     </VStack>
   );

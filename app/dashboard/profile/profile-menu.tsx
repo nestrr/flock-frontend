@@ -1,6 +1,6 @@
 import { MenuContent, MenuItem } from "@/app/shared/snippets/menu";
 import { HStack, Portal, Text, useMenuContext } from "@chakra-ui/react";
-import { useGroupDispatch } from "../new-group/group-context";
+import { useGroupDispatch } from "../group/shared/group-context";
 import { type Profile } from "@/app/swr/profile";
 
 export default function ProfileMenu({ profile }: { profile: Profile }) {

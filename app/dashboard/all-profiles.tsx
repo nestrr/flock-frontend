@@ -20,9 +20,7 @@ import {
 import { useSession } from "next-auth/react";
 import ProfileWrapper from "./profile/profile-wrapper";
 import FailedLoad from "../shared/failed-load";
-import { GroupProvider } from "./new-group/group-context";
-import GroupBar from "./new-group/group-bar";
-import GroupCreation from "./new-group/group-creation";
+import { GroupProvider } from "./group/shared/group-context";
 import {
   SelectContent,
   SelectItem,
@@ -38,6 +36,8 @@ import {
   AccordionItemTrigger,
   AccordionRoot,
 } from "../shared/snippets/accordion";
+import GroupBar from "./group/new-group/group-bar";
+import GroupCreation from "./group/new-group/group-creation";
 function CampusSelect() {
   const { data: session, status } = useSession();
   const {
@@ -65,8 +65,11 @@ function CampusSelect() {
       collection={campusList}
       rounded="md !important"
     >
-      <SelectTrigger bg="accent" clearable>
-        <SelectValueText placeholder="campus" color="accent.fg" />
+      <SelectTrigger bg="accent.emphasized" color="red.700" clearable>
+        <SelectValueText
+          placeholder="campus"
+          color={{ _light: "white", _dark: "accent.fg" }}
+        />
       </SelectTrigger>
       <SelectContent>
         {campusList.items.map((campus) => (
@@ -113,8 +116,11 @@ function YearSelect() {
       rounded="md !important"
       multiple
     >
-      <SelectTrigger bg="accent" clearable>
-        <SelectValueText placeholder="year" color="accent.fg" />
+      <SelectTrigger bg="accent.emphasized" color="red.700" clearable>
+        <SelectValueText
+          placeholder="year"
+          color={{ _light: "white", _dark: "accent.fg" }}
+        />
       </SelectTrigger>
       <SelectContent>
         {standingList.items.map((standing, index) => (
@@ -152,9 +158,13 @@ function DegreeTypeSelect() {
       collection={standingList}
       rounded="md !important"
       multiple
+      colorPalette="black"
     >
-      <SelectTrigger bg="accent" clearable>
-        <SelectValueText placeholder="program" color="accent.fg" />
+      <SelectTrigger bg="accent.emphasized" color="red.700" clearable>
+        <SelectValueText
+          placeholder="program"
+          color={{ _light: "white", _dark: "accent.fg" }}
+        />
       </SelectTrigger>
       <SelectContent>
         {standingList.items.map((standing, index) => (
@@ -182,8 +192,11 @@ function DaySelect() {
       rounded="md !important"
       multiple
     >
-      <SelectTrigger bg="accent" clearable>
-        <SelectValueText placeholder="day(s) available" color="accent.fg" />
+      <SelectTrigger bg="accent.emphasized" color="red.700" clearable>
+        <SelectValueText
+          placeholder="day(s) available"
+          color={{ _light: "white", _dark: "accent.fg" }}
+        />
       </SelectTrigger>
       <SelectContent>
         {dayList.items.map((standing, index) => (

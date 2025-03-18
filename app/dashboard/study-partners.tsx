@@ -1,6 +1,6 @@
 "use client";
 import { Tabs, Card, Heading } from "@chakra-ui/react";
-import { LuSquareCheck, LuUser } from "react-icons/lu";
+import { LuUser } from "react-icons/lu";
 import { FaPeoplePulling } from "react-icons/fa6";
 import AllProfiles from "./all-profiles";
 import AllGroups from "./all-groups";
@@ -33,10 +33,6 @@ export default function StudyPartners() {
               <FaPeoplePulling />
               Groups
             </Tabs.Trigger>
-            <Tabs.Trigger value="tasks">
-              <LuSquareCheck />
-              Settings
-            </Tabs.Trigger>
           </Tabs.List>
           <Tabs.Content
             value="search"
@@ -54,9 +50,6 @@ export default function StudyPartners() {
             w="100%"
           >
             <AllGroups />
-          </Tabs.Content>
-          <Tabs.Content value="tasks">
-            Manage your tasks for freelancers
           </Tabs.Content>
         </Tabs.Root>
       </Card.Body>
